@@ -1,0 +1,22 @@
+//
+//  {{{projectName}}}Response.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface {{{projectName}}}Response : NSObject
+
+@property (nonatomic, strong) id objectData;
+@property (nonatomic, strong) NSURLResponse* response;
+
+- (id) initWithData: (id) data andResponse: (NSURLResponse*) response;
+
+- (NSString*)responseCode;
+- (NSInteger)statusCode;
+
+@end

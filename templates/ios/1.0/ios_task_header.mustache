@@ -1,0 +1,24 @@
+//
+//  {{message.methodUpperCase}}Task.h
+//  {{projectName}}
+//  Version: {{version}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "{{message.request.name}}.h"
+#import "{{message.response.name}}.h"
+#import "{{message.service}}Logic.h"
+#import "TaskDelegate.h"
+
+@class {{projectName}}Response;
+
+@interface {{message.methodUpperCase}}Task : NSObject
+
++ (void) {{message.method}}TaskForRequest:({{message.request.name}} *)request completed:(void(^)({{projectName}}Response *response))completedBlock error:(void(^)(NSError *error))errorBlock;
+
++ (void) {{message.name}}TaskForRequest:({{message.request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<TaskDelegate>) delegate;
+
+@end

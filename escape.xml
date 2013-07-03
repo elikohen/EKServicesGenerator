@@ -1,0 +1,310 @@
+<protocol>
+    <!-- MENSAJES DE LA APP -->
+	<messages>
+		<!-- MENSAJE: -->
+		<message name="getRatesList" service="Common" method="getRatesList" description="" type="Get">
+		    <urlPattern>
+		        <url address="${baseUrl}/srv/pbl/rateslist"/>
+		    </urlPattern>
+		    <request name="GetRatesListRequestDTO">
+		    </request>
+		    <response name="GetRatesListResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+                <field name="data" type="RateDTO*" description="Result"/>
+		    </response>
+		</message>
+		
+		<!-- MENSAJE: -->
+		<message name="getConfig" service="Common" method="getConfig" description="" type="Get">
+		    <urlPattern>
+		        <url address="${configUrl}"/>
+		    </urlPattern>
+		    <request name="GetConfigRequestDTO">
+		    </request>
+		    <response name="GetConfigResponseDTO">
+		    	<field name="response_code" type="string" />
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="UpdateDTO"/>
+			</response>
+		</message>
+		
+		<!-- MENSAJE: -->
+		<message name="getDestinationDetail" service="Common" method="getDestinationDetail" description="" type="Get">
+		    <urlPattern>
+		        <url address="${baseUrl}/srv/pbl/destdetail?destination_number=${destination_number}"/>
+		    </urlPattern>
+		    <request name="GetDestinationDetailRequestDTO">
+		    	<field name="destination_number" type="string"/>
+		    </request>
+		    <response name="GetDestinationDetailResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="DestinationDetailDTO" description="Result"/>
+		    </response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="login" service="Auth" method="login" description="" type="Post">
+		    <urlPattern>
+		        <url address="${baseUrl}/srv/login"/>
+		    </urlPattern>
+		    <request name="LoginRequestDTO">
+		    	<field name="username" type="string"/>
+		    	<field name="password" type="string"/>
+		    	<field name="language" type="string"/>
+		    </request>
+		    <response name="LoginResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+                <field name="data" type="UserDTO"/>
+		    </response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="recoverPassword" service="Auth" method="recoverPassword" description="" type="Post">
+		    <urlPattern>
+		        <url address="${baseUrl}/srv/recpsw"/>
+		    </urlPattern>
+		    <request name="RecoverPasswordRequestDTO">
+		    	<field name="username" type="string"/>
+		    </request>
+		    <response name="RecoverPasswordResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    </response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="activate" service="Auth" method="activate" description="" type="Post">
+		    <urlPattern>
+		        <url address="${baseUrl}/srv/activate"/>
+		    </urlPattern>
+		    <request name="ActivateRequestDTO">
+		    	<field name="username" type="string"/>
+		    	<field name="password" type="string"/>
+		    	<field name="cod_country" type="string"/>
+		    </request>
+		    <response name="ActivateResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    </response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="getConsumesList" service="Consume" method="getConsumesList" description="" type="Get">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/csm?id_consume=${id_consume}"/>
+		    </urlPattern>
+		    <request name="GetConsumesListRequestDTO">
+		        <field name="id_acc" type="string"/>
+		        <field name="id_consume" type="string"/>
+		    </request>
+		    <response name="GetConsumesListResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="ConsumeDTO*" description="Result"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="deleteConsume" service="Consume" method="deleteConsume" description="" type="DeleteJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/csm?id_consume=${id_consume}"/>
+		    </urlPattern>
+		    <request name="DeleteConsumeRequestDTO">
+		        <field name="id_acc" type="string"/>
+		        <field name="id_consume" type="string"/>
+		    </request>
+		    <response name="DeleteConsumeResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="getUserInfo" service="User" method="getUserInfo" description="" type="Get">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/usr/${id_user}/"/>
+		    </urlPattern>
+		    <request name="GetUserInfoRequestDTO">
+		        <field name="id_acc" type="String"/>
+		        <field name="id_user" type="String"/>
+		    </request>
+		    <response name="GetUserInfoResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="UserInfoDTO"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="putUserInfo" service="User" method="putUserInfo" description="" type="PutJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/usr/${id_user}/"/>
+		    </urlPattern>
+		    <request name="PutUserInfoRequestDTO">
+		        <field name="id_acc" type="String"/>
+		        <field name="id_user" type="String"/>
+		        <field name="email" type="String"/>
+		        <field name="cod_country" type="String"/>
+		        <field name="password" type="String"/>
+		    </request>
+		    <response name="PutUserInfoResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="UserInfoDTO"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="postWebcall" service="User" method="postWebcall" description="" type="PostJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/usr/${id_user}/call"/>
+		    </urlPattern>
+		    <request name="PostWebcallRequestDTO">
+		        <field name="id_acc" type="String"/>
+		        <field name="id_user" type="String"/>
+		        <field name="destination" type="String"/>
+		    </request>
+		    <response name="PostWebcallResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="WebCallDTO"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="postFeedback" service="User" method="postFeedback" description="" type="PostJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/usr/${id_user}/feedback"/>
+		    </urlPattern>
+		    <request name="PostFeedbackRequestDTO">
+		        <field name="id_acc" type="String"/>
+		        <field name="id_user" type="String"/>
+		        <field name="id_webcall" type="String"/>
+		        <field name="feedback_score" type="String"/>
+		    </request>
+		    <response name="PostFeedbackResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="logout" service="User" method="logout" description="" type="PostJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/usr/${id_user}/out"/>
+		    </urlPattern>
+		    <request name="LogoutRequestDTO">
+		    	<field name="id_acc" type="String"/>
+		        <field name="id_user" type="String"/>
+		    </request>
+		    <response name="LogoutResponseDTO">
+		    	<field name="response_code" type="string"/>
+		    	<field name="response_description" type="string"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="getPaypalPaymentUrl" service="User" method="getPaypalPaymentUrl" description="" type="Get">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/ppl?item_id=${item_id}"/>
+		    </urlPattern>
+		    <request name="GetPaypalPaymentUrlRequestDTO">
+		    	<field name="id_acc" type="String"/>
+		    	<field name="item_id" type="String"/>
+		    </request>
+		    <response name="GetPaypalPaymentUrlResponseDTO">
+		    	<field name="response_code" type="string" />
+		    	<field name="response_description" type="string"/>
+		    	<field name="data" type="PaypalPaymentUrlDTO"/>
+			</response>
+		</message>
+
+		<!-- MENSAJE: -->
+		<message name="postPaypalMail" service="User" method="postPaypalMail" description="" type="PostJSON">
+		    <urlPattern>
+		        <url address="${baseUrl}/acc/${id_acc}/ppl"/>
+		    </urlPattern>
+		    <request name="PostPaypalMailRequestDTO">
+		    	<field name="id_acc" type="String"/>
+		    </request>
+		    <response name="PostPaypalMailResponseDTO">
+		    	<field name="response_code" type="string" />
+		    	<field name="response_description" type="string"/>
+			</response>
+		</message>
+	</messages>
+	<!-- TIPOS DE LA APP -->
+	<types>
+	    <type name="UpdateDTO">
+			<field name="urlAppStore" type="string"/>
+			<field name="appProblems" type="boolean"/>
+			<field name="infoMsg_es" type="string"/>
+			<field name="forceUpdate" type="boolean"/>
+			<field name="appProblemsMsg_es" type="string"/>
+			<field name="appStoreVersion" type="string"/>
+			<field name="showInfoMsg" type="boolean"/>
+			<field name="appProblemsMsg_en" type="string"/>
+			<field name="suggestUpdate" type="boolean"/>
+			<field name="infoMsg_en" type="string"/>
+		</type>
+		<type name="RateDTO">
+			<field name="amount" type="string"/>
+			<field name="charindex" type="string"/>
+			<field name="nameorder" type="string"/>
+			<field name="cod_country" type="string"/>
+			<field name="enable" type="string"/>
+			<field name="destination" type="string"/>
+			<field name="destination_code" type="string"/>
+		</type>
+		<type name="DestinationDetailDTO">
+	        <field name="destination_area" type="string"/>
+	        <field name="destination_number" type="string"/>
+	        <field name="status" type="string"/>
+	        <field name="destination_enable" type="string"/>
+	        <field name="destination_amount" type="string"/>
+	        <field name="destination_amount_with_tax" type="string"/>
+	        <field name="destination_code" type="string"/>
+	        <field name="country_code" type="string"/>
+	    </type>
+	    <type name="ConsumeDTO">
+	        <field name="amount" type="string"/>
+	        <field name="id" type="string"/>
+	        <field name="duration" type="string"/>
+	        <field name="callee_number" type="string"/>
+	        <field name="hour" type="string"/>
+	        <field name="type" type="string"/>
+	        <field name="date" type="string"/>
+	    </type>
+    	<type name="UserDTO">
+            <field name="id_user" type="string"/>
+            <field name="authtoken" type="string"/>
+            <field name="id_account" type="string"/>
+            <field name="domain_sip" type="string"/>
+            <field name="ip_sip" type="string"/>
+            <field name="password_sip" type="string"/>
+            <field name="username_sip" type="string"/>
+	    </type>
+    	<type name="UserInfoDTO">
+	    	<field name="email" type="string"/>
+	    	<field name="cod_country" type="string"/>
+	    	<field name="credit" type="string"/>
+	    	<field name="rates_list_last_update" type="string"/>
+		</type>
+		<type name="WebCallDTO">
+			<field name="domain_sip" type="string"/>
+            <field name="ip_sip" type="string"/>
+            <field name="password_sip" type="string"/>
+            <field name="username_sip" type="string"/>
+            <field name="feedback" type="string"/>
+            <field name="id_webcall" type="string"/>
+		</type>
+		<type name="PaypalPaymentUrlDTO">
+	    	<field name="status" type="string"/>
+	    	<field name="url" type="string"/>
+	    	<field name="error_desc" type="string"/>
+		</type>
+	</types>
+</protocol>

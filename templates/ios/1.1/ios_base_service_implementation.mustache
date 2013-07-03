@@ -1,0 +1,365 @@
+//
+//  {{{serviceName}}}.m
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGev. All rights reserved.
+//
+
+#import "Base{{{serviceName}}}Logic.h"
+
+#import "{{{projectName}}}Helper.h"
+{{#imports}}
+#import "{{request.name}}.h"
+{{^response.isRawData}}
+#import "{{response.name}}.h"
+{{/response.isRawData}}
+{{/imports}}
+#import "{{{projectName}}}Response.h"
+
+@implementation Base{{{serviceName}}}Logic
+
+- (id) init{
+	self = [super init];
+	if(self){
+		//Custom implementation
+	}
+	return self;
+}
+
+{{#service.messages}}
+#pragma mark - {{{methodUpperCase}}}
+
+/**
+ * Método async{{{methodUpperCase}}} (blocks): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor
+ * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor en caso de error
+ * @param error: Bloque a ejecutar en caso de error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)request completed:(void(^)({{projectName}}Response *response))completedBlock completed:(void(^)({{projectName}}Response *response))failedBlock error:(void(^)(NSError *error))errorBlock {
+
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
+	dispatch_async(dispatch_get_global_queue(0,0), ^{
+
+		NSError *error;	
+		
+		{{projectName}}Response *response = [self {{method}}:request onError:&error];
+	
+        dispatch_async(dispatch_get_main_queue(), ^{
+			[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+			if (!error && completedBlock) {
+				if([[{{projectName}}Helper sharedInstance] checkCorrectResponse:response serviceTag: 0]){
+					completedBlock(response);
+				}
+				else{
+					failedBlock(response);
+				}
+				
+			}
+			
+			if (error && errorBlock) {
+				errorBlock(error);
+			}
+        });
+    });
+}
+
+/**
+ * Método async{{{methodUpperCase}}} (delegate): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
+	
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	
+	dispatch_async(dispatch_get_global_queue(0,0), ^{
+		
+		NSError *error;
+		BOOL networkError = ![[{{projectName}}Helper sharedInstance] checkConnection];
+		
+		{{projectName}}Response *response = nil;
+		if(!networkError){
+			response = [self {{method}}:request onError:&error];
+		}
+		
+        dispatch_async(dispatch_get_main_queue(), ^{
+			[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+			
+			if(networkError && delegate){
+				[delegate onTaskNoConnection:tag];
+			}
+			else if (!error && delegate) {
+				if([[{{projectName}}Helper sharedInstance] checkCorrectResponse:response serviceTag: tag]){
+					[delegate onTaskSuccess:response withTag:tag];
+				}
+				else{
+					[delegate onTaskFailed:response withTag:tag];
+				}
+			}
+			else if (error && delegate) {
+				[delegate onTaskError:error withTag:tag];
+			}
+        });
+    });
+}
+
+/**
+ * Método {{{method}}}: {{{description}}}
+ * @param {{{request.name}}} Petición al servicio
+ * @returns {{{response.name}}} Respuesta del servidor
+ */
+-({{{projectName}}}Response *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError
+{
+	NSString *url=@"{{{url}}}";
+	
+	url=[[{{{projectName}}}Helper sharedInstance] preInjectURLParameters:url withObject:{{{request.javaInstanceName}}}];
+	{{#fieldsInUrl}}
+	{{#isBoolean}}
+	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}.boolValue ? @"true": @"false"];
+    {{/isBoolean}}
+	{{^isBoolean}}
+	NSString *string{{{nameUcase}}}=@"";
+	if({{{request.javaInstanceName}}}.{{{javaName}}}) {
+        string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        if(!string{{{nameUcase}}}) {
+            string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}];
+        }
+	}							 
+	{{/isBoolean}}
+	{{/fieldsInUrl}}
+
+	{{#inURLbutNotField}}
+    #ifdef {{.}}
+	url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{.}}"] withString:{{.}}];
+    #endif
+	{{/inURLbutNotField}}
+
+	{{#fieldsInUrl}}
+    url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{{name}}}"] withString:string{{{nameUcase}}}];
+	{{/fieldsInUrl}}
+	
+	url=[[{{{projectName}}}Helper sharedInstance] postInjectURLParameters:url  withObject:{{{request.javaInstanceName}}}];
+	
+	_ModelGenLog(@"URL: %@", url);
+	
+	{{#isWrite}}	
+	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+	{{#fieldsNotInUrl}}
+	[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] forKey:@"{{{name}}}"];       
+	{{/fieldsNotInUrl}}
+	double time=[[NSDate date] timeIntervalSince1970];
+    [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];
+    {{/isWrite}}
+	
+	{{{projectName}}}Response *result = nil;
+
+	NSError *error=nil;
+	NSString *escapedUrl = [[{{{projectName}}}Helper sharedInstance] escapeUrl:url];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+	
+	{{#isWrite}}
+	NSMutableArray * content = [NSMutableArray array];
+	for(NSString * key in dict) {
+  		[content addObject: [NSString stringWithFormat: @"%@=%@", key, dict[key]]];
+    }
+	NSString * body = [content componentsJoinedByString: @"&"];
+	NSData * bodyData = [body dataUsingEncoding: NSUTF8StringEncoding];
+	[request setHTTPBody:bodyData];
+	[request setValue:@"{{{contentType}}}" forHTTPHeaderField:@"Content-Type"];
+	{{#isPost}}	
+	[request setHTTPMethod:@"POST"];
+    {{/isPost}}
+    {{#isPut}}
+    [request setHTTPMethod:@"PUT"];
+    {{/isPut}}
+    {{#isDelete}}
+    [request setHTTPMethod:@"DELETE"];
+    {{/isDelete}}
+    {{/isWrite}}
+    {{#isWriteJSON}}
+
+    NSDictionary *allFieldsDict=[{{{request.javaInstanceName}}} writeToDictionary];
+    //Remove attributes only required for forming the url
+    NSMutableDictionary *jsonDict = [[NSMutableDictionary alloc] initWithDictionary:allFieldsDict];
+    {{#fieldsInUrl}}
+    [jsonDict removeObjectForKey:@"{{{name}}}"];
+    {{/fieldsInUrl}}
+    
+    NSData *requestData = [NSJSONSerialization dataWithJSONObject:jsonDict 
+                                               options:NSJSONWritingPrettyPrinted
+                                                 error:&error];		
+
+	_ModelGenLog(@"%@",[[NSString alloc] initWithData:requestData encoding:NSUTF8StringEncoding]);
+	{{#isPostJSON}}
+	[request setHTTPMethod:@"POST"];
+	{{/isPostJSON}}
+	{{#isPutJSON}}
+	[request setHTTPMethod:@"PUT"];
+	{{/isPutJSON}}
+	{{#isDeleteJSON}}
+	[request setHTTPMethod:@"DELETE"];
+	{{/isDeleteJSON}}
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[request setValue:@"{{contentType}}" forHTTPHeaderField:@"Content-Type"];
+	[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+	[request setHTTPBody: requestData];
+    
+    {{/isWriteJSON}}
+    {{#isGet}}
+
+	[request setHTTPMethod:@"GET"];
+    {{/isGet}}
+
+	request = [[{{{projectName}}}Helper sharedInstance] customizeRequest:request];
+    {{#isHttps}}
+    
+	self.receivedData = [[NSMutableData alloc] init];
+	self.receivedResponse = nil;
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+
+    [connection start];
+    
+    self.downloadComplete = NO;
+    self.error = nil;
+    
+    NSRunLoop *theRL = [NSRunLoop currentRunLoop];
+    while (!self.downloadComplete && [theRL runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
+
+    [[{{{projectName}}}Helper sharedInstance] preprocessResponse:self.receivedResponse];
+    
+    if(!self.error) {
+    	{{#response.isRawData}}
+    	result = [[{{{projectName}}}Response alloc] initWithData:self.receivedDAta andResponse:response];
+    	{{/response.isRawData}}
+    	{{^response.isRawData}}
+		NSString *stringData = [[NSString alloc] initWithData:self.receivedData encoding:NSUTF8StringEncoding];
+		stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
+		[self.receivedData setData:[stringData dataUsingEncoding:NSUTF8StringEncoding]];
+
+        id json = [NSJSONSerialization JSONObjectWithData:self.receivedData options:kNilOptions error:&error];
+        _ModelGenLog(@"JSON: %@",json);
+        if([json isKindOfClass:[NSArray class]]){
+			NSArray *jsonArray = json;
+			NSMutableArray *arrayData = [[NSMutableArray alloc] initWithCapacity:jsonArray.count];
+			for(NSDictionary *jsonData in jsonArray){
+				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
+				[arrayData addObject:dtoData];
+			}
+			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:response];
+		}
+		else if([json isKindOfClass:[NSDictionary class]]){
+			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
+        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:response];
+		}
+		{{/response.isRawData}}
+    }
+    else {
+    	_ModelGenLog(@"Error: %@",self.error);
+
+    	if (inError) {
+    		*inError = self.error;
+    	}
+    	return nil;
+    }
+    {{/isHttps}}
+    {{^isHttps}}
+
+	NSURLResponse *response = nil;
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+	[[{{{projectName}}}Helper sharedInstance] preprocessResponse:response];
+		
+    if(!error) {
+    	{{#response.isRawData}}
+    	result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
+    	{{/response.isRawData}}
+    	{{^response.isRawData}}
+    	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+		stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
+		data = [stringData dataUsingEncoding:NSUTF8StringEncoding];
+        id json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+        _ModelGenLog(@"JSON: %@",json);
+        if([json isKindOfClass:[NSArray class]]){
+			NSArray *jsonArray = json;
+			NSMutableArray *arrayData = [[NSMutableArray alloc] initWithCapacity:jsonArray.count];
+			for(NSDictionary *jsonData in jsonArray){
+				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
+				[arrayData addObject:dtoData];
+			}
+			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:response];
+		}
+		else if([json isKindOfClass:[NSDictionary class]]){
+			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
+        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:response];
+		}
+		{{/response.isRawData}}
+    } else {
+    	_ModelGenLog(@"Error: %@",error);
+    	if (inError) {
+    		*inError=error;
+    	}
+    	return nil;
+    }
+		
+    {{/isHttps}}
+	return result;
+}
+
+{{/service.messages}}
+
+#pragma mark - Metodos heredados de NSURLConnectionDelegate
+
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
+    
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+    
+    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    
+    self.receivedData = nil;
+    self.receivedResponse = nil;
+    
+    NSLog(@"Connection failed! Error - %@ %@",
+          [error localizedDescription],
+          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+    
+    self.error = error;
+    self.downloadComplete = YES;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+
+	self.receivedResponse = response;
+    
+    [self.receivedData setLength:0];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    
+    [self.receivedData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    
+    self.downloadComplete = YES;
+    
+}
+
+
+@end
+
+ 

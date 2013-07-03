@@ -1,0 +1,694 @@
+<protocol>
+    <messages>
+<!-- NOT USED IN APP-->        
+<!--         <message name='postFonyouNumberUris' service='Phone' method='postFonyouNumberUris' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/phn/'/>
+            </urlPattern>
+            <request name='PostFonyouNumberUrisRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+            </request>
+            <response name='PostFonyouNumberUrisResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message>
+        <message name='getPhoneList' service='Phone' method='getPhoneList' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/phn/'/>
+            </urlPattern>
+            <request name='GetPhoneListRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_phone' type='string'/>
+                <field name='items' type='int'/>
+                <field name='page' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='GetPhoneListResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message>
+        <message name='getPhoneInfo' service='Phone' method='getPhoneInfo' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/phn/${id_phone}/'/>
+            </urlPattern>
+            <request name='GetPhoneInfoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_phone' type='int'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='GetPhoneInfoResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message>
+        <message name='putFonyouNumberUris' service='Phone' method='putFonyouNumberUris' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/phn/${id_phone}/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberUrisRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_phone' type='int'/>
+            </request>
+            <response name='PutFonyouNumberUrisResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message>
+        <message name='deleteFonyouNumberUris' service='Phone' method='deleteFonyouNumberUris' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/phn/${id_phone}/'/>
+            </urlPattern>
+            <request name='DeleteFonyouNumberUrisRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_phone' type='int'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='DeleteFonyouNumberUrisResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message> -->
+
+        <!-- OK: Requiere siempre id_addressbook=0 -->
+        <message name='getAddressBookList' service='AddressBook' method='getAddressBookList' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/?id_addressbook=${id_addressbook}'/>
+            </urlPattern>
+            <request name='GetAddressBookListRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_addressbook' type='string'/>
+                <field name='items' type='int'/>
+                <field name='page' type='string'/>
+            </request>
+            <response name='AddressBookDTO'/>
+        </message>
+        <!--  OK -->
+        <message name='getAddressBookInfo' service='AddressBook' method='getAddressBookInfo' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_addressbook}'/>
+            </urlPattern>
+            <request name='GetAddressBookInfoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_addressbook' type='string'/>
+            </request>
+            <response name='AddressBookDTO'/>
+        </message>
+        <!-- OK: Requiere id_contact=0 date y items=-1 (es incremental)-->
+        <message name='getContactsList' service='AddressBook' method='getContactsList' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/id_contact=${id_contact}&amp;date=${date}&amp;items=${items}'/>
+            </urlPattern>
+            <request name='GetContactsListRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='items' type='int'/>
+                <field name='page' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='GetContactsListResponseDTO'>
+                <field name='system_date' type='string'/>
+                <field name='contacts' type='ContactDTO*'/>
+            </response>
+        </message>
+        <!-- OK: REQUIERE TODOS LOS ELEMENTOS!-->
+        <message name='postContact' service='AddressBook' method='postContact' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/'/>
+            </urlPattern>
+            <request name='PostContactRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='name' type='string'/>
+                <field name='surnames' type='string'/>
+                <field name='nickname' type='string'/>
+                <field name='mobilephone' type='string'/>
+                <field name='officephone' type='string'/>
+                <field name='homephone' type='string'/>
+                <field name='fonyou_number' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: REQUIERE date-->
+        <message name='deleteContactForwadings' service='AddressBook' method='deleteContactForwadings' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/fwd/?date=${date}'/>
+            </urlPattern>
+            <request name='DeleteContactForwadingsRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: los campos forwarding se han de poner 0 o 1 -->
+        <message name='postContactForwadings' service='AddressBook' method='postContactForwadings' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/fwd/'/>
+            </urlPattern>
+            <request name='PostContactForwadingsRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='forwarding_calls' type='string'/>
+                <field name='forwarding_sms' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: pasar siempre greetid y date-->
+        <message name='postContactGreeting' service='AddressBook' method='postContactGreeting' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/grt/'/>
+            </urlPattern>
+            <request name='PostContactGreetingRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='greetid' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: pasar siempre date -->
+        <message name='deleteContactGreeting' service='AddressBook' method='deleteContactGreeting' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/grt/?date=${date}'/>
+            </urlPattern>
+            <request name='DeleteContactGreetingRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: responde raw data-->
+        <message name='getContactPhoto' service='AddressBook' method='getContactPhoto' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/photo/'/>
+            </urlPattern>
+            <request name='GetContactPhotoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+            </request>
+            <response type='raw'/>
+        </message>
+        <!-- OK -->
+        <message name='postContactPhoto' service='AddressBook' method='postContactPhoto' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/photo/'/>
+            </urlPattern>
+            <request name='PostContactPhotoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='photo' type='string'/>
+                <field name='type' type='string'/>
+                <field name='url' type='string'/>
+            </request>
+            <response name='StatusDTO'/>
+        </message>
+        <!-- OK: pasar fecha 3000!-->
+        <message name='deleteContact' service='AddressBook' method='deleteContact' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/?date=${date}'/>
+            </urlPattern>
+            <request name='DeleteContactRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK -->
+        <message name='getContactsInfo' service='AddressBook' method='getContactsInfo' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/'/>
+            </urlPattern>
+            <request name='GetContactsInfoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: lo mismo que postcontact con date 3000-->
+        <message name='putContact' service='AddressBook' method='putContact' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_address_book}/con/${id_contact}/'/>
+            </urlPattern>
+            <request name='PutContactRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_address_book' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_contact' type='string'/>
+                <field name='name' type='string'/>
+                <field name='surnames' type='string'/>
+                <field name='nickname' type='string'/>
+                <field name='mobilephone' type='string'/>
+                <field name='officephone' type='string'/>
+                <field name='homephone' type='string'/>
+                <field name='fonyou_number' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ContactDTO'/>
+        </message>
+        <!-- OK: necesario type, items (20) y date (va decrementando con la ultima que recibes) -->
+        <message name='getActivityList' service='Activity' method='getActivityList' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/?type=${type}&amp;items=${items}&amp;date=${date}'/>
+            </urlPattern>
+            <request name='GetActivityListRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='type' type='string'/>
+                <field name='items' type='int'/>
+                <field name='page' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ActivityDTO'/>
+        </message>
+
+<!-- NOT USED -->
+<!--    <message name='putActivityGroup' service='Activity' method='putActivityGroup' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/'/>
+            </urlPattern>
+            <request name='PutActivityGroupRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+            </request>
+            <response name='PutActivityGroupResponseDTO'>
+                <field name='response_code' type='string'/>
+                <field name='response_description' type='string'/>
+            </response>
+        </message> -->
+
+        <!-- PENDING... -->
+        <message name='deleteAllVoicemails' service='Activity' method='deleteAllVoicemails' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/'/>
+            </urlPattern>
+            <request name='DeleteAllVoicemailsRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+            </request>
+            <response name='ActivityDTO'/>
+        </message>
+        <!-- OK Devloverá el objeto borrado-->
+        <message name='deleteActivity' service='Activity' method='deleteActivity' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/${id_activity}/?date=${date}'/>
+            </urlPattern>
+            <request name='DeleteActivityRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_activity' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='ActivityDTO'/>
+        </message>
+        <!-- OK: sirve para marcar activity como leida bnew=0 (no nueva == leida) -->
+        <message name='putActivity' service='Activity' method='putActivity' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/${id_activity}/'/>
+            </urlPattern>
+            <request name='PutActivityRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_activity' type='string'/>
+                <field name="bnew" type="string"/>
+                <field name="date" type="string"/>
+            </request>
+            <response name='ActivityDTO'/>
+        </message>
+        <!-- OK: pasar date 3000 y phone 0 --> 
+        <message name='getFonyouNumberSMS' service='Activity' method='getFonyouNumberSMS' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/sms/?date=${date}&amp;phone=${phone}'/>
+            </urlPattern>
+            <request name='GetFonyouNumberSMSRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='date' type='string'/>
+                <field name='phone' type='string'/>
+            </request>
+            <response name='ActivityDTO'/>
+        </message>
+        <!-- OK: RAW DATA -->
+        <message name='getVoiceMessageFile' service='Activity' method='getVoiceMessageFile' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/${id_activity}/voice/'/>
+            </urlPattern>
+            <request name='GetVoiceMessageFileRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_activity' type='string'/>
+            </request>
+            <response type='raw'/>
+        </message>
+        <!-- OK: poner siempre date 1970-->
+        <message name='getFonyouNumberInfo' service='FonyouNumber' method='getFonyouNumberInfo' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/?date=${date}'/>
+            </urlPattern>
+            <request name='GetFonyouNumberInfoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!--OK: poner date 3000-->
+        <message name='putFonyouNumberInfo' service='FonyouNumber' method='putFonyouNumberInfo' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberInfoRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='voice_to_email' type='int'/>
+                <field name='extended_absence_greeting' type='int'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK: poner date 3000  -->
+        <message name='putFonyouNumberEmail' service='FonyouNumber' method='putFonyouNumberEmail' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/eml/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberEmailRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='email' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK: poner date 3000  -->
+        <message name='putFonyouNumberPassword' service='FonyouNumber' method='putFonyouNumberPassword' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/pwd/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberPasswordRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='password' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK: poner date 3000 -->
+        <message name='putFonyouNumberForwardings' service='FonyouNumber' method='putFonyouNumberForwardings' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/deffwd/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberForwardingsRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='forwarding_calls' type='string'/>
+                <field name='forwarding_sms' type='string'/>
+                <field name='apply_all' type='int'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK: poner date 3000  -->
+        <message name='putFonyouNumberGreetings' service='FonyouNumber' method='putFonyouNumberGreetings' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/defgrt/'/>
+            </urlPattern>
+            <request name='PutFonyouNumberGreetingsRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='greetid' type='string'/>
+                <field name='apply_all' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK: poner date 3000  -->
+        <message name='putFonyouNumberCurrentGreetingToAll' service='FonyouNumber' method='putFonyouNumberCurrentGreetingToAll' description='' type='PutJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/defgrtall'/>
+            </urlPattern>
+            <request name='PutFonyouNumberCurrentGreetingToAllRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='FonyouNumberDTO'/>
+        </message>
+        <!-- OK  -->
+        <message name='postWebCall' service='FonyouNumber' method='postWebCall' description='' type='PostJSON'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/call/'/>
+            </urlPattern>
+            <request name='PostWebCallRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='destination' type="string"/>
+            </request>
+            <response name='StatusDTO'/>
+        </message>
+        <!-- JORDI PENDING - INTERNAL SERVER ERROR  -->
+        <message name='postGreeting' service='FonyouNumber' method='postGreeting' description='' type='Post'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/'/>
+            </urlPattern>
+            <request name='PostGreetingRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='name' type="string"/>
+                <field name='file' type="string"/>
+                <field name='description' type="string"/>
+                <field name='date' type="string"/>
+            </request>
+            <response name='GreetingDTO'/>
+        </message>
+        <!-- Requiere id_greeting=0 y date  OK-->
+        <message name='getGreetingsList' service='FonyouNumber' method='getGreetingsList' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/?id_greeting=${id_greeting}&amp;date=${date}'/>
+            </urlPattern>
+            <request name='GetGreetingsListRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_greeting' type='string'/>
+                <field name='items' type='int'/>
+                <field name='page' type='string'/>
+                <field name='date' type='string'/>
+            </request>
+            <response name='GreetingDTO'/>
+        </message>
+        <!-- PENDIENTE INTERNAL SERVER ERROR  -->
+        <message name='deleteGreetingFile' service='FonyouNumber' method='deleteGreetingFile' description='' type='Delete'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/${id_greeting}/'/>
+            </urlPattern>
+            <request name='DeleteGreetingFileRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_greeting' type='string'/>
+            </request>
+            <response name='StatusDTO'/> <!--200 ok-->
+        </message>
+        <!-- OK  -->
+        <message name='getGreetingFile' service='FonyouNumber' method='getGreetingFile' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/${id_greeting}/file/'/>
+            </urlPattern>
+            <request name='GetGreetingFileRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+                <field name='id_greeting' type='string'/>
+            </request>
+            <response type='raw'/>
+        </message>
+        <!-- Poner application/json aunque se envien como form params OK -->
+        <message name='Login' service='FonyouNumber' method='Login' description='' type='Post'>
+            <urlPattern>
+                <url address='${base_url}/srv/login/'/>
+            </urlPattern>
+            <request name='LoginRequestDTO'>
+                <field name='username' type='string'/>
+                <field name='password' type='string'/>
+            </request>
+            <response name='UserDTO'/>
+        </message>
+        <!-- OK -->
+        <message name='logout' service='FonyouNumber' method='logout' description='' type='Get'>
+            <urlPattern>
+                <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/out/'/>
+            </urlPattern>
+            <request name='LogoutRequestDTO'>
+                <field name='id_user' type='string'/>
+                <field name='id_account' type='string'/>
+                <field name='id_fonyou_number' type='string'/>
+            </request>
+            <response name='StatusDTO'/>
+        </message>
+    </messages>
+    <types>
+        <type name="ActivityDTO">
+            <field name="bnew" type="string"/>
+            <field name="text" type="string"/>
+            <field name="idcontact" type="string"/>
+            <field name="firstnamedesc" type="string"/>
+            <field name="type" type="string"/>
+            <field name="middlenamedesc" type="string"/>
+            <field name="id" type="string"/>
+            <field name="contactnumber" type="string"/>
+            <field name="duration" type="string"/>
+            <field name="voiceid" type="string"/>
+            <field name="username" type="string"/>
+            <field name="lastnamedesc" type="string"/>
+            <field name="number_type" type="string"/>
+            <field name="datetime" type="string"/>
+        </type>
+        <type name="ContactDTO">
+            <field name="personal_forwarding_calls" type="string"/>
+            <field name="nickname" type="string"/>
+            <field name="date_modified" type="string"/>
+            <field name="status" type="string"/>
+            <field name="greetdesc" type="string"/>
+            <field name="greetname" type="string"/>
+            <field name="personal_greeting" type="string"/>
+            <field name="id" type="string"/>
+            <field name="mobilephone" type="string"/>
+            <field name="duration" type="string"/>
+            <field name="last_update" type="string"/>
+            <field name="officephone" type="string"/>
+            <field name="name" type="string"/>
+            <field name="greetid" type="string"/>
+            <field name="forwarding_calls" type="string"/>
+            <field name="forwarding_sms" type="string"/>
+            <field name="surnames" type="string"/>
+            <field name="bedit" type="string"/>
+            <field name="bspecial" type="string"/>
+            <field name="homephone" type="string"/>
+            <field name="personal_forwarding_sms" type="string"/>
+        </type>
+        <type name="UserDTO">
+            <field name="id_user" type="string"/>
+            <field name="authtoken" type="boolean"/>
+            <field name="id_account" type="string"/>
+            <field name="fonyou_number" type="boolean"/>
+            <field name="id_fonyou_number" type="string"/>
+        </type>
+        <type name="FonyouNumberDTO">
+            <field name="new_voice_messages" type="int"/>
+            <field name="total_new_voice_messages" type="int"/>
+            <field name="phone3_pin" type="string"/>
+            <field name="total_new_texts" type="int"/>
+            <field name="greetdesc" type="string"/>
+            <field name="extended_absence_greeting" type="int"/>
+            <field name="device_model" type="string"/>
+            <field name="new_texts" type="int"/>
+            <field name="phone3_number" type="string"/>
+            <field name="phone1_pin" type="string"/>
+            <field name="phone2_number" type="string"/>
+            <field name="forwarding_sms" type="string"/>
+            <field name="phone2_label" type="string"/>
+            <field name="new_lost_calls" type="int"/>
+            <field name="phone1_number" type="string"/>
+            <field name="date_modified" type="string"/>
+            <field name="total_new_lost_calls" type="int"/>
+            <field name="catalog" type="int"/>
+            <field name="contacts_deleted" type="int"/>
+            <field name="new_contacts" type="int"/>
+            <field name="days_limit" type="string"/>
+            <field name="device_id" type="string"/>
+            <field name="greetname" type="string"/>
+            <field name="greetsystem" type="string"/>
+            <field name="duration" type="string"/>
+            <field name="phone2_pin" type="string"/>
+            <field name="email" type="string"/>
+            <field name="phone1_label" type="string"/>
+            <field name="voice_to_email" type="int"/>
+            <field name="greetid" type="string"/>
+            <field name="forwarding_calls" type="string"/>
+            <field name="phone3_label" type="string"/>
+        </type>
+        <type name="AddressBookDTO">
+            <field name="description" type="string"/>
+            <field name="name" type="boolean"/>
+            <field name="id_addressbook" type="string"/>
+        </type>
+        <type name="GreetingDTO">
+            <field name="id" type="string"/>
+            <field name="duration" type="boolean"/>
+            <field name="system" type="int"/>
+            <field name="date_modified" type="string"/>
+            <field name="description" type="boolean"/>
+            <field name="catalog" type="int"/>
+            <field name="name" type="string"/>
+            <field name="date" type="boolean"/>
+        </type>
+        <type name="StatusDTO">
+            <field name="status" type="string"/>
+            <field name="description" type="string"/>
+        </type>
+    </types>
+</protocol>

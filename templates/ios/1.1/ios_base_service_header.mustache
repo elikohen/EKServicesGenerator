@@ -1,0 +1,67 @@
+//
+//  Base{{{serviceName}}}Logic
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+{{#imports}}
+#import "{{request.name}}.h"
+{{^response.isRawData}}
+#import "{{response.name}}.h"
+{{/response.isRawData}}
+{{/imports}}
+#import "ServiceDelegate.h"
+
+// Definimos macro para log
+#ifndef _ModelGenLog
+
+#ifdef SERVICE_DEBUG
+ #define _ModelGenLog(...) NSLog(__VA_ARGS__)
+#else
+ #define _ModelGenLog(...) do { } while (0)
+#endif
+
+#endif // _ModelGenLog
+
+@class {{projectName}}Response;
+
+@interface Base{{{serviceName}}}Logic : NSObject
+
+@property (nonatomic, strong) NSMutableData *receivedData;
+@property (nonatomic, strong) NSURLResponse *receivedResponse;
+@property (nonatomic, strong) NSError *error;
+@property (nonatomic) BOOL downloadComplete;
+
+{{#service.messages}}
+
+#pragma mark - {{{methodUpperCase}}}
+/**
+ * Método async{{{methodUpperCase}}} (blocks): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor
+ * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor en caso de error
+ * @param error: Bloque a ejecutar en caso de error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)request completed:(void(^)({{projectName}}Response *response))completedBlock completed:(void(^)({{projectName}}Response *response))failedBlock error:(void(^)(NSError *error))errorBlock;
+
+/**
+ * Método async{{{methodUpperCase}}} (delegate): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate;
+	
+/**
+ * Método {{{method}}}: {{{description}}}
+ * @param {{{request.javaInstanceName}}} Encapsulación de datos de petición al servicio
+ * @returns {{projectName}}Response Encapsulación respuesta del servidor
+ */
+-({{projectName}}Response *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError;
+
+{{/service.messages}}
+@end

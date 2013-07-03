@@ -1,0 +1,190 @@
+package {{{packagename}}}.logic.utils;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.Enumeration;
+
+import org.apache.http.HttpVersion;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.scheme.SocketFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+
+import android.content.Context;
+import android.os.Build;
+import android.util.Log;
+
+/**
+ * Crea un cliente de HttpClient que acepta cualquier certificado de servidor
+ * 
+ * 
+ */
+public class HttpClientHelper {
+
+	public static final int DEFAULT_BEHAVIOR = 0;
+	public static final int ACCEPT_ALL_CERTS = 1;
+	public static final int ACCEPT_CUSTOM_CERTS = 2;
+
+	public static final int DEFAULT_MAX_CONNECTIONS = 4;
+	public static final int DEFAULT_SOCKET_TIMEOUT = 20 * 1000;
+
+	private static int maxConnections = DEFAULT_MAX_CONNECTIONS;
+	private static int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+
+	private static HttpClientHelper instance = new HttpClientHelper();
+
+	private int mMode = 0;
+	private KeyStore mCustomKeystore = null;
+
+	private DefaultHttpClient mHttpClient = null;
+
+	private HttpClientHelper() {
+
+	}
+
+	public static HttpClientHelper getInstance() {
+		return instance;
+	}
+
+	public void setMode(int mode) {
+
+	}
+
+	public boolean setCustomKeystore(Context ctx, int resourceId) {
+		InputStream in = null;
+
+		try {
+			KeyStore appTrusted = KeyStore.getInstance("BKS");
+			in = ctx.getResources().openRawResource(resourceId);
+			appTrusted.load(in, null);
+			mCustomKeystore = appTrusted;
+
+			// Updating httpClient
+			mHttpClient = getNewHttpClient();
+
+			return true;
+		} catch (Exception e) {
+			Log.e("HttpClientHelper", e.getMessage());
+		}
+		return false;
+	}
+
+	public synchronized DefaultHttpClient getHttpClient() {
+		if (mHttpClient == null) {
+			mHttpClient = getNewHttpClient();
+		}
+		return mHttpClient;
+	}
+
+	public DefaultHttpClient getNewHttpClient() {
+		try {
+			KeyStore trustStore = KeyStore.getInstance(KeyStore
+					.getDefaultType());
+			trustStore.load(null, null);
+
+			SocketFactory sf = null;
+
+			HttpParams params = new BasicHttpParams();
+
+			ConnManagerParams.setTimeout(params, socketTimeout);
+			ConnManagerParams.setMaxConnectionsPerRoute(params,
+					new ConnPerRouteBean(maxConnections));
+			ConnManagerParams.setMaxTotalConnections(params,
+					DEFAULT_MAX_CONNECTIONS);
+			HttpConnectionParams.setSoTimeout(params, socketTimeout);
+			HttpConnectionParams.setTcpNoDelay(params, true);
+
+			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+
+			if (mMode == ACCEPT_CUSTOM_CERTS) {
+				sf = createAdditionalCertsSSLSocketFactory();
+			} else if (mMode == ACCEPT_ALL_CERTS) {
+				sf = new FakeSocketFactory();
+			} else {
+				sf = new CustomSSLSocketFactory(trustStore);
+				((SSLSocketFactory) sf)
+						.setHostnameVerifier(SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+			}
+
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("http", PlainSocketFactory
+					.getSocketFactory(), 80));
+			registry.register(new Scheme("https", sf, 443));
+
+			ClientConnectionManager ccm = new ThreadSafeClientConnManager(
+					params, registry);
+
+			return new DefaultHttpClient(ccm, params);
+		} catch (Exception e) {
+			return new DefaultHttpClient();
+		}
+	}
+
+	protected org.apache.http.conn.ssl.SSLSocketFactory createAdditionalCertsSSLSocketFactory() {
+		try {
+			InputStream in = null;
+			// Load default system keystore
+			KeyStore trusted = KeyStore.getInstance(KeyStore.getDefaultType());
+			try {
+				in = new BufferedInputStream(new FileInputStream(
+						System.getProperty("javax.net.ssl.trustStore")));
+				trusted.load(in, null); // no password is "changeit"
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					in.close();
+					in = null;
+				}
+			}
+
+			// Load application keystore & merge with system
+			if (mCustomKeystore != null) {
+				try {
+					for (Enumeration<String> e = mCustomKeystore.aliases(); e
+							.hasMoreElements();) {
+						final String alias = e.nextElement();
+						final KeyStore.Entry entry = mCustomKeystore.getEntry(
+								alias, null);
+						trusted.setEntry(System.currentTimeMillis() + ":"
+								+ alias, entry, null);
+					}
+				} catch (Exception e) {
+				} finally {
+					if (in != null) {
+						in.close();
+						in = null;
+					}
+				}
+			}
+
+			SSLSocketFactory ssl;
+			if (Build.VERSION.SDK_INT < 14) {
+				ssl = new AdditionalKeyStoresSSLSocketFactory(trusted);
+			} else {
+				ssl = new AdditionalICSKeyStoresSSLSocketFactory(trusted);
+			}
+
+			ssl.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+
+			return ssl;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+
+	}
+}

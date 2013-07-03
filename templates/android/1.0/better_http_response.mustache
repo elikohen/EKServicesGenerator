@@ -1,0 +1,35 @@
+/**
+  {{serviceName}}
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.tasks;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
+public interface BetterHttpResponse {
+
+	public HttpResponse unwrap();
+
+	public InputStream getResponseBody() throws IOException;
+
+	public byte[] getResponseBodyAsBytes() throws IOException;
+
+	public String getResponseBodyAsString() throws IOException;
+
+	public int getStatusCode();
+
+	public Header[] getAllHeaders();
+
+	public String getHeader(String header);
+	
+	public Object getDataObject();
+}

@@ -1,0 +1,33 @@
+//
+//  {{{dto.name}}}.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+{{#dto.objectFields}}
+#import "{{{iosBaseTypeSingular}}}.h"
+{{/dto.objectFields}}
+{{#dto.objectArrayFields}}
+#import "{{{iosBaseTypeSingular}}}.h"
+{{/dto.objectArrayFields}}
+
+
+@interface {{{dto.name}}} : NSObject
+
+{{#dto.fields}}
+/// {{{comment}}}
+@property (nonatomic, strong{{{iosCustomGetter}}}) {{{typeIOS}}} *{{{javaName}}};
+{{/dto.fields}}
+
+// Creación del objeto a partir de un Diccionario (equivalente al JSON)
++({{{dto.name}}} *) readFromDictionary:(NSDictionary *)dict;
++(NSArray *) readFromDictionaryArray:(NSArray *)dictArray;
+
+// Serialización del objeto a un Diccionario
+-(NSDictionary *) writeToDictionary;
+
+@end

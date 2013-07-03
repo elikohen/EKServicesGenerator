@@ -1,0 +1,78 @@
+/**
+  {{serviceName}}
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.tasks;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+
+
+public class BetterHttpResponseImpl implements BetterHttpResponse {
+
+	private HttpResponse mResponse;
+	private HttpEntity mEntity;
+	private Object mDataObject;
+
+	public BetterHttpResponseImpl(HttpResponse response, HttpEntity entity, Object dataObject) throws IOException {
+		this.mResponse = response;
+		this.mEntity = entity;
+		this.mDataObject = dataObject;
+	}
+
+	public HttpResponse unwrap() {
+		return mResponse;
+	}
+
+	public InputStream getResponseBody() throws IOException {
+		return mEntity.getContent();
+	}
+
+	public byte[] getResponseBodyAsBytes() throws IOException {
+		return EntityUtils.toByteArray(mEntity);
+	}
+
+	public String getResponseBodyAsString() throws IOException {
+
+		InputStream entityStream = mEntity.getContent();
+		StringBuilder entityStringBuilder = new StringBuilder();
+		byte [] buffer = new byte[1024];
+		int bytesReadCount;
+		while ((bytesReadCount = entityStream.read(buffer)) > 0) {
+		    entityStringBuilder.append(new String(buffer, 0, bytesReadCount));
+		}
+		String entityString = entityStringBuilder.toString();
+		return entityString;
+	}
+
+	public int getStatusCode() {
+		return this.mResponse.getStatusLine().getStatusCode();
+	}
+
+	public Header[] getAllHeaders() {
+		return mResponse.getAllHeaders();
+	}
+
+	public String getHeader(String header) {
+		if (!mResponse.containsHeader(header)) {
+			return null;
+		}
+		return mResponse.getFirstHeader(header).getValue();
+	}
+
+	@Override
+	public Object getDataObject() {
+		return mDataObject;
+	}
+}
+

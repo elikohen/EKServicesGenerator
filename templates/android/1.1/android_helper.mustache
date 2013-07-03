@@ -1,0 +1,72 @@
+/**
+  ${projectName}Helper
+
+  Created by Generator on 19/01/12.
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: ${version}
+*/
+package {{{packagename}}}.logic;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HttpContext;
+
+{{#fyMode}}
+import {{{packagename}}}.model.dto.FyResponse;
+{{/fyMode}}
+
+public class {{{projectName}}}Helper
+{
+	private static {{{projectName}}}Helper instance=new {{{projectName}}}Helper();
+	private Map<String,String> headers = new HashMap<String,String>();
+	
+	private {{{projectName}}}Helper() {
+	} 
+	public static {{{projectName}}}Helper getInstance() {
+		return instance;
+	}
+	public final void addHeader(String header, String value){
+		headers.put(header, value);
+	}
+	public final String getHeader(String header){
+		return headers.get(header);
+	}
+	public final void removeHeader(String header){
+		headers.remove(header);
+	}
+	public void addHeaders(HttpRequestBase request){
+		Iterator<Entry<String,String>> it = headers.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Entry<String,String> pair = it.next();
+	        request.addHeader(pair.getKey(), pair.getValue());
+	    }
+	}
+	public String preInjectURLParameters(String url,Object request) {
+		return url;
+	}
+	public String postInjectURLParameters(String url,Object request) {
+		return url;
+	}
+	public void preExecute(DefaultHttpClient client, HttpRequestBase request, CookieStore cookieStore, HttpContext context) {	
+		
+	}
+	public void postExecute(DefaultHttpClient client, HttpRequestBase request, HttpResponse response, CookieStore cookieStore) {
+	
+	}	
+	public String preprocessResponse(String responseString) {
+		return responseString;
+	}
+
+	{{#fyMode}}
+	public void preprocessResponse(FyResponse response) {
+		
+	}
+	{{/fyMode}}
+}

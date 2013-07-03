@@ -1,0 +1,104 @@
+/**
+  {{serviceName}}
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+package {{{packagename}}}.tasks.{{{message.serviceNameLower}}};
+
+import org.apache.http.conn.HttpHostConnectException;
+
+import android.os.AsyncTask;
+
+import {{{packagename}}}.model.dto.*; 
+import {{{packagename}}}.logic.*;
+import {{{packagename}}}.tasks.BetterHttpResponse;
+import {{{packagename}}}.tasks.NotifiedHttpRequest;
+
+
+ /**
+ * Task de {{{message.method}}}
+ * @author Eli Kohen
+ *
+ */
+public class {{{message.methodUpperCase}}}Task extends AsyncTask<{{{message.request.name}}},Integer, BetterHttpResponse> {
+
+	private NotifiedHttpRequest mListener = null;
+	private int mTag = -1;
+	private ServiceException mException = null;
+	
+	public {{{message.methodUpperCase}}}Task(NotifiedHttpRequest listener, int tag)
+	{
+		this.mListener = listener;
+		this.mTag = tag;
+	}
+
+	//Ocultando constructor default
+	@SuppressWarnings("unused")
+	private {{{message.methodUpperCase}}}Task(){
+	}
+	
+	@Override
+	public final BetterHttpResponse doInBackground({{{message.request.name}}}... params) {
+		// Obtenemos el dto de petición
+		{{{message.request.name}}} request=params[0];
+		BetterHttpResponse response=null;
+		try
+		{
+{{#preMethod}}
+		{{{preMethod}}}(request);
+{{/preMethod}}	
+			// Llamamos al servicio
+			response=execOnBackground(request);
+		}
+		catch(final {{{packagename}}}.logic.ServiceException ex)
+		{
+			mException = ex;
+			if(!isCancelled())
+			{
+				return null;
+			}
+		}
+		return response;
+	}
+
+	@Override
+	protected void onPostExecute(BetterHttpResponse result) {
+		super.onPostExecute(result);
+		
+		if(mListener != null){
+			if(mException != null){
+				if (mException.getCause() instanceof HttpHostConnectException) {
+					mListener.notifyNoConnection(mTag);
+				}
+				else{
+					mListener.notifyErrorConnecting(mException, mTag);
+				}
+			}
+			else if(result.getStatusCode() == 200){
+				{{#fyMode}}
+				FyResponse data = (FyResponse)result.getDataObject();
+				if(data.isValid()){
+					mListener.notifySuccess(result, mTag);
+				}
+				else{
+					mListener.notifyError(result, mTag);
+				}
+				{{/fyMode}}
+				{{^fyMode}}
+				mListener.notifySuccess(result, mTag);
+				{{/fyMode}}
+			}
+			else{
+				mListener.notifyError(result, mTag);
+			}
+		}
+	}
+
+	public BetterHttpResponse execOnBackground({{{message.request.name}}} request) throws {{{packagename}}}.logic.ServiceException
+	{
+		return {{{message.service}}}Logic.getInstance().{{{message.method}}}(request);
+	}
+}
