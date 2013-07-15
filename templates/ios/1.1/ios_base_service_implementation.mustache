@@ -32,40 +32,20 @@
 #pragma mark - {{{methodUpperCase}}}
 
 /**
- * Método async{{{methodUpperCase}}} (blocks): {{{description}}}
+ * Helper method to fill {{{request.name}}} and call the aync service.
  * @param {{{request.name}}} request: Petición al servicio
- * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor
- * @param completed: Bloque a ejecutar con la respuesta  ({{{response.name}}}) del servidor en caso de error
- * @param error: Bloque a ejecutar en caso de error
+ * @param NSInteger tag: Identificador de la llamada
+ * @param Parameters: all parameters to form a {{{request.name}}} object
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
  */
-- (void) async{{methodUpperCase}}:({{request.name}} *)request completed:(void(^)({{projectName}}Response *response))completedBlock completed:(void(^)({{projectName}}Response *response))failedBlock error:(void(^)(NSError *error))errorBlock {
+- (void) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate {
 
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	{{request.name}} *request = [[{{request.name}} alloc] init];
+	{{#request.fields}}
+	request.{{{javaName}}} = {{{javaName}}};
+	{{/request.fields}}
 
-	dispatch_async(dispatch_get_global_queue(0,0), ^{
-
-		NSError *error;	
-		
-		{{projectName}}Response *response = [self {{method}}:request onError:&error];
-	
-        dispatch_async(dispatch_get_main_queue(), ^{
-			[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        
-			if (!error && completedBlock) {
-				if([[{{projectName}}Helper sharedInstance] checkCorrectResponse:response serviceTag: 0]){
-					completedBlock(response);
-				}
-				else{
-					failedBlock(response);
-				}
-				
-			}
-			
-			if (error && errorBlock) {
-				errorBlock(error);
-			}
-        });
-    });
+	[self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
 }
 
 /**

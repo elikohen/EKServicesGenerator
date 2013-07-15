@@ -90,6 +90,15 @@ class Message
     end
     params.join(',')
   end
+
+  def iosRequestParams
+    params=Array.new
+    request.fields.each do |field|
+      params << field.javaName+':('+field.typeIOS+'*) '+field.javaName
+    end
+    params.join(' ')
+  end
+
   def simpleType
     type.gsub('JSON','')
   end
