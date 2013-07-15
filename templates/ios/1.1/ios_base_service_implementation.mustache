@@ -235,7 +235,7 @@
     
     if(!self.error) {
     	{{#response.isRawData}}
-    	result = [[{{{projectName}}}Response alloc] initWithData:self.receivedDAta andResponse:response];
+    	result = [[{{{projectName}}}Response alloc] initWithData:self.receivedData andResponse:self.receivedResponse];
     	{{/response.isRawData}}
     	{{^response.isRawData}}
 		NSString *stringData = [[NSString alloc] initWithData:self.receivedData encoding:NSUTF8StringEncoding];
@@ -251,11 +251,14 @@
 				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
 				[arrayData addObject:dtoData];
 			}
-			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:response];
+			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:self.receivedResponse];
 		}
 		else if([json isKindOfClass:[NSDictionary class]]){
 			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
-        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:response];
+        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:self.receivedResponse];
+		}
+		else{
+			result = [[{{{projectName}}}Response alloc] initWithData:self.receivedData andResponse:self.receivedResponse];
 		}
 		{{/response.isRawData}}
     }
@@ -297,6 +300,9 @@
 		else if([json isKindOfClass:[NSDictionary class]]){
 			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
         	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:response];
+		}
+		else{
+			result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
 		}
 		{{/response.isRawData}}
     } else {
