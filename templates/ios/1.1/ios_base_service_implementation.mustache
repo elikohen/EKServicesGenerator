@@ -211,50 +211,16 @@
     NSRunLoop *theRL = [NSRunLoop currentRunLoop];
     while (!self.downloadComplete && [theRL runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
 
-    [[{{{projectName}}}Helper sharedInstance] preprocessResponse:self.receivedResponse];
-    
-    if(!self.error) {
-    	{{#response.isRawData}}
-    	result = [[{{{projectName}}}Response alloc] initWithData:self.receivedData andResponse:self.receivedResponse];
-    	{{/response.isRawData}}
-    	{{^response.isRawData}}
-		NSString *stringData = [[NSString alloc] initWithData:self.receivedData encoding:NSUTF8StringEncoding];
-		stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
-		[self.receivedData setData:[stringData dataUsingEncoding:NSUTF8StringEncoding]];
-
-        id json = [NSJSONSerialization JSONObjectWithData:self.receivedData options:kNilOptions error:&error];
-        _ModelGenLog(@"JSON: %@",json);
-        if([json isKindOfClass:[NSArray class]]){
-			NSArray *jsonArray = json;
-			NSMutableArray *arrayData = [[NSMutableArray alloc] initWithCapacity:jsonArray.count];
-			for(NSDictionary *jsonData in jsonArray){
-				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
-				[arrayData addObject:dtoData];
-			}
-			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:self.receivedResponse];
-		}
-		else if([json isKindOfClass:[NSDictionary class]]){
-			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
-        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:self.receivedResponse];
-		}
-		else{
-			result = [[{{{projectName}}}Response alloc] initWithData:self.receivedData andResponse:self.receivedResponse];
-		}
-		{{/response.isRawData}}
-    }
-    else {
-    	_ModelGenLog(@"Error: %@",self.error);
-
-    	if (inError) {
-    		*inError = self.error;
-    	}
-    	return nil;
-    }
-    {{/isHttps}}
+    NSURLResponse *response = self.receivedResponse;
+	NSData *data = self.receivedData;
+	error = self.error;
+	{{/isHttps}}
     {{^isHttps}}
 
 	NSURLResponse *response = nil;
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+	{{/isHttps}}
 
 	[[{{{projectName}}}Helper sharedInstance] preprocessResponse:response];
 		
@@ -263,10 +229,13 @@
     	result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
     	{{/response.isRawData}}
     	{{^response.isRawData}}
-    	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-		stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
-		data = [stringData dataUsingEncoding:NSUTF8StringEncoding];
-        id json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+    	id json = nil;
+    	if(data){
+	    	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+			stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
+			data = [stringData dataUsingEncoding:NSUTF8StringEncoding];
+	        json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+    	}
         _ModelGenLog(@"JSON: %@",json);
         if([json isKindOfClass:[NSArray class]]){
 			NSArray *jsonArray = json;
@@ -291,9 +260,8 @@
     		*inError=error;
     	}
     	return nil;
-    }
-		
-    {{/isHttps}}
+    }	
+    
 	return result;
 }
 
