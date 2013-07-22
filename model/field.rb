@@ -235,7 +235,7 @@ class Field
         "Double*"=>"NSNumber","double*"=>"NSNumber",
 
         "String"=>"NSString","string"=>"NSString",
-        "String*"=>"NSNumber","string*"=>"NSNumber",
+        "String*"=>"NSString","string*"=>"NSString",
 
         "Boolean"=>"NSNumber","boolean"=>"NSNumber",
         "Boolean*"=>"NSNumber","boolean*"=>"NSNumber",
@@ -256,41 +256,30 @@ class Field
     return type
   end
 
-    def iosBaseTypeCoreData
+  #TODO: add mappings for relationships (arrays and custom objects)
+  def iosBaseTypeCoreData
     mappings={
 
         "Integer"=>"Integer 64","integer"=>"Integer 64","int"=>"Integer 64",
-        "Integer*"=> "","integer*"=>"","int*"=>"",
 
         "Float"=>"Decimal","float"=>"Decimal",
-        "Float*"=>"","float*"=>"",
 
         "Double"=>"Decimal","double"=>"Decimal",
-        "Double*"=>"","double*"=>"",
 
         "String"=>"String","string"=>"String",
-        "String*"=>"","string*"=>"",
 
         "Boolean"=>"Boolean","boolean"=>"Boolean", "bool"=>"Boolean",
-        "Boolean*"=>"","boolean*"=>"", "bool*"=>"",
 
         "Date"=>"Date","date"=>"Date",
-        "Date*"=>"","date*"=>"",
 
         "Long"=>"Integer 64","long"=>"Integer 64",
-        "Long*"=>"","long*"=>""
+
     }
     if(mappings.has_key?type)
       return mappings[type]
     end
-
-    if(type.index('*'))
-      return type[0..-2]
-    end
-    if(type.length == 0) 
-      return nil
-    end
-    return type
+    
+    return nil
   end
 
 end
