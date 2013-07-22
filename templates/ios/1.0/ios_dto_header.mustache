@@ -19,13 +19,13 @@
 @interface {{{dto.name}}} : NSObject {
   
 {{#dto.fields}}
-    {{{typeIOS}}} *_{{{javaName}}};				///< {{{comment}}}
+    {{{typeIOS}}} *_{{{iosName}}};				///< {{{comment}}}
 {{/dto.fields}}
 
 }
 
 {{#dto.fields}}
-@property (nonatomic, strong) {{{typeIOS}}} *{{{javaName}}};
+@property (nonatomic, strong) {{{typeIOS}}} *{{{iosName}}};
 {{/dto.fields}}
 
 @end

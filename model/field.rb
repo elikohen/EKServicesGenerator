@@ -3,6 +3,8 @@
 ##################################
 class Field
   
+  attr_accessor :parentName
+  @parentName=nil
   attr_accessor :name
   @name=nil
   attr_accessor :type
@@ -31,7 +33,18 @@ class Field
   end
   def javaName
     return name.camelize()[0..1].downcase<<name.camelize()[2..-1]
-
+  end
+  def iosName
+    iosname = name
+    if(iosname == 'id' && parentName)
+      aux = parentName.downcase
+      aux = aux.gsub("dto", "")
+      iosname = aux+"Id"
+      return iosname
+    elsif(iosname == 'id')
+      return 'objectId'
+    end
+    return iosname.camelize()[0..1].downcase<<name.camelize()[2..-1]
   end
   def iosCustomGetter
     javaname = self.javaName
@@ -239,6 +252,43 @@ class Field
 
     if(type.index('*'))
       return type[0..-2]
+    end
+    return type
+  end
+
+    def iosBaseTypeCoreData
+    mappings={
+
+        "Integer"=>"Integer 64","integer"=>"Integer 64","int"=>"Integer 64",
+        "Integer*"=> "","integer*"=>"","int*"=>"",
+
+        "Float"=>"Decimal","float"=>"Decimal",
+        "Float*"=>"","float*"=>"",
+
+        "Double"=>"Decimal","double"=>"Decimal",
+        "Double*"=>"","double*"=>"",
+
+        "String"=>"String","string"=>"String",
+        "String*"=>"","string*"=>"",
+
+        "Boolean"=>"Boolean","boolean"=>"Boolean", "bool"=>"Boolean",
+        "Boolean*"=>"","boolean*"=>"", "bool*"=>"",
+
+        "Date"=>"Date","date"=>"Date",
+        "Date*"=>"","date*"=>"",
+
+        "Long"=>"Integer 64","long"=>"Integer 64",
+        "Long*"=>"","long*"=>""
+    }
+    if(mappings.has_key?type)
+      return mappings[type]
+    end
+
+    if(type.index('*'))
+      return type[0..-2]
+    end
+    if(type.length == 0) 
+      return nil
     end
     return type
   end

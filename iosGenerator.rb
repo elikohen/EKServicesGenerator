@@ -32,6 +32,45 @@ class IOSGenerator
       File.open(dto_implementation_file, 'w') { |file| file.write(res) }
     end
 
+    if(ios_version && ios_version >= "1.1" && !protocol.coreDataTypes.empty?)
+      ############ COREDATA
+      data_dir=ios_output+'/gen/Model/coredata'
+      datamodel_dir = data_dir+"/"+project_name+".xcdatamodeld/"+project_name+".xcdatamodel"
+      coreDataTypes = protocol.coreDataTypes
+      FileUtils.mkdir_p(datamodel_dir)
+      FileUtils.mkdir_p(data_dir+"/providers")
+      puts 'CORE DATA'
+      puts '-------------'
+      parameters['coreDataTypes'] = coreDataTypes
+      puts "\tCreating #{project_name}.xcdatamodeld ..."
+      res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_model.mustache').read,parameters)
+      File.open(datamodel_dir+"/contents", 'w') { |file| file.write(res) }
+      puts "\tCreating CoreDataManager ..."
+      res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_manager_header.mustache').read,parameters)
+      File.open(data_dir+"/CoreDataManager.h", 'w') { |file| file.write(res) }
+      res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_manager_implementation.mustache').read,parameters)
+      File.open(data_dir+"/CoreDataManager.m", 'w') { |file| file.write(res) }
+      coreDataTypes.each do |cdType|
+        puts "\tCreating DTO ... \t#{cdType.iosModelName}"
+        data_header_file=data_dir+'/'+cdType.iosModelName+'.h'
+        data_implementation_file=data_dir+'/'+cdType.iosModelName+'.m'
+        parameters['className']=cdType.iosModelName
+        parameters['cdType']=cdType
+        res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_entity_header.mustache').read,parameters)
+        File.open(data_header_file, 'w') { |file| file.write(res) }
+        res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_entity_implementation.mustache').read,parameters)
+        File.open(data_implementation_file, 'w') { |file| file.write(res) }
+
+        puts "\tCreating Provider ... \t#{cdType.iosProviderName}"
+        provider_header_file=data_dir+'/providers/'+cdType.iosProviderName+'.h'
+        provider_implementation_file=data_dir+'/providers/'+cdType.iosProviderName+'.m'
+        parameters['className']=cdType.iosProviderName
+        res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_provider_header.mustache').read,parameters)
+        File.open(provider_header_file, 'w') { |file| file.write(res) } ##unless File.exists?(provider_header_file)
+        res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_provider_implementation.mustache').read,parameters)
+        File.open(provider_implementation_file, 'w') { |file| file.write(res) } ##unless File.exists?(provider_implementation_file)
+      end
+    end
 
     if(ios_version && ios_version == "1.0")
       ############ DAOs

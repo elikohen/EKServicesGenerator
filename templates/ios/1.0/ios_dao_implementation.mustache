@@ -37,35 +37,35 @@ NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 		
 	{{#dto.baseFields}}
 		{{#isBoolean}}
-			[dict setValue:instance.{{{javaName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+			[dict setValue:instance.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
 	    {{/isBoolean}}
 		{{^isBoolean}}
-			[dict setValue:instance.{{{javaName}}} forKey:@"{{{name}}}"];
+			[dict setValue:instance.{{{iosName}}} forKey:@"{{{name}}}"];
 		{{/isBoolean}}
 	{{/dto.baseFields}}
 		
 	{{#dto.baseArrayFields}}
 	    {{#isBoolean}})
-			[dict setValue:instance.{{{javaName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+			[dict setValue:instance.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
 		{{/isBoolean}}
         {{^isBoolean}}
-			[dict setValue:instance.{{{javaName}}} forKey:@"{{{name}}}"];
+			[dict setValue:instance.{{{iosName}}} forKey:@"{{{name}}}"];
 		{{/isBoolean}}
 	{{/dto.baseArrayFields}}
 	
 	{{#dto.objectFields}}
-	NSDictionary *dict{{{javaName}}}=[[{{{typeJavaDAO}}} sharedInstance] writeToDictionary:instance.{{{javaName}}}];
-	[dict setValue:dict{{{javaName}}} forKey:@"{{{name}}}"];
+	NSDictionary *dict{{{iosName}}}=[[{{{typeJavaDAO}}} sharedInstance] writeToDictionary:instance.{{{iosName}}}];
+	[dict setValue:dict{{{iosName}}} forKey:@"{{{name}}}"];
 	{{/dto.objectFields}}
 
 	{{#dto.objectArrayFields}}
-	NSMutableArray *array{{{javaName}}}=[[NSMutableArray alloc]init];
-	for({{{iosBaseTypeSingular}}} *typeItem in instance.{{{javaName}}})
+	NSMutableArray *array{{{iosName}}}=[[NSMutableArray alloc]init];
+	for({{{iosBaseTypeSingular}}} *typeItem in instance.{{{iosName}}})
 	{
-		NSDictionary *dict{{{javaName}}}=[[{{{typeJavaDAO}}} sharedInstance] writeToDictionary:typeItem];
-		[array{{{javaName}}} addObject:dict{{{javaName}}}];
+		NSDictionary *dict{{{iosName}}}=[[{{{typeJavaDAO}}} sharedInstance] writeToDictionary:typeItem];
+		[array{{{iosName}}} addObject:dict{{{iosName}}}];
 	}
-	[dict setValue:array{{{javaName}}} forKey:@"{{{name}}}"];
+	[dict setValue:array{{{iosName}}} forKey:@"{{{name}}}"];
 	
 	{{/dto.objectArrayFields}}
 	return dict;
@@ -76,12 +76,12 @@ NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 	{{{dto.name}}} *instance=[[{{{dto.name}}} alloc]init];
 
     {{#dto.objectArrayFields}}
-    instance.{{{javaName}}}=[[NSMutableArray alloc]init];
+    instance.{{{iosName}}}=[[NSMutableArray alloc]init];
     {{/dto.objectArrayFields}}
 
     {{#dto.baseFields}}
     if (![[dict objectForKey:@"{{{name}}}"] isKindOfClass:[NSNull class]]) {
-        	instance.{{{javaName}}}=[dict objectForKey:@"{{{name}}}"];
+        	instance.{{{iosName}}}=[dict objectForKey:@"{{{name}}}"];
         }
     {{/dto.baseFields}}
 
@@ -92,12 +92,12 @@ NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 	{
 		[{{{name}}}MutableArray addObject:item];
 	}
-	instance.{{{javaName}}}={{{name}}}MutableArray;
+	instance.{{{iosName}}}={{{name}}}MutableArray;
     {{/dto.baseArrayFields}}
   
     {{#dto.objectFields}}
 	if ([dict objectForKey:@"{{{name}}}"]) {
-        instance.{{{javaName}}}=[[{{{typeJavaDAO}}} sharedInstance] readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
+        instance.{{{iosName}}}=[[{{{typeJavaDAO}}} sharedInstance] readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
     }
     {{/dto.objectFields}}
 
@@ -117,14 +117,14 @@ NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 			{{{iosBaseTypeSingular}}} *item=[[{{{typeJavaDAO}}} sharedInstance] readFromDictionary:data];
 			[{{{name}}}MutableArray addObject:item];
 		}
-		instance.{{{javaName}}}={{{name}}}MutableArray;
+		instance.{{{iosName}}}={{{name}}}MutableArray;
 	}
 	else if ({{{name}}}Item)
 	{
 		NSMutableArray *{{{name}}}MutableArray=[[NSMutableArray alloc]init];
 		{{{iosBaseTypeSingular}}} *item=[[{{{typeJavaDAO}}} sharedInstance] readFromDictionary:{{{name}}}Item];
 		[{{{name}}}MutableArray addObject:item];
-		instance.{{{javaName}}}={{{name}}}MutableArray;
+		instance.{{{iosName}}}={{{name}}}MutableArray;
 	}
     {{/dto.objectArrayFields}}
 	return instance;

@@ -148,10 +148,13 @@ class XmlReader
     serviceType=ServiceType.new
     serviceType.name=xmlServiceType.attributes['name']
     serviceType.type=xmlServiceType.attributes['type']
+    serviceType.dbMode=xmlServiceType.attributes['dbMode']
     serviceType.fields=Array.new
     i=0
     xmlServiceType.each_element('field') do |xmlField|
-      serviceType.fields[i]=XmlReader.read_field(xmlField)
+      field = XmlReader.read_field(xmlField)
+      field.parentName = serviceType.name
+      serviceType.fields[i]=field
       i=i+1
     end
     return serviceType

@@ -42,7 +42,7 @@
 
 	{{request.name}} *request = [[{{request.name}} alloc] init];
 	{{#request.fields}}
-	request.{{{javaName}}} = {{{javaName}}};
+	request.{{{iosName}}} = {{{iosName}}};
 	{{/request.fields}}
 
 	[self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
@@ -101,14 +101,14 @@
 	url=[[{{{projectName}}}Helper sharedInstance] preInjectURLParameters:url withObject:{{{request.javaInstanceName}}}];
 	{{#fieldsInUrl}}
 	{{#isBoolean}}
-	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}.boolValue ? @"true": @"false"];
+	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}.boolValue ? @"true": @"false"];
     {{/isBoolean}}
 	{{^isBoolean}}
 	NSString *string{{{nameUcase}}}=@"";
-	if({{{request.javaInstanceName}}}.{{{javaName}}}) {
-        string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	if({{{request.javaInstanceName}}}.{{{iosName}}}) {
+        string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         if(!string{{{nameUcase}}}) {
-            string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}];
+            string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}];
         }
 	}							 
 	{{/isBoolean}}
@@ -131,7 +131,7 @@
 	{{#isWrite}}	
 	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 	{{#fieldsNotInUrl}}
-	[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] forKey:@"{{{name}}}"];       
+	[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] forKey:@"{{{name}}}"];       
 	{{/fieldsNotInUrl}}
 	double time=[[NSDate date] timeIntervalSince1970];
     [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];

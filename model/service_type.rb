@@ -2,6 +2,8 @@
 # Type class
 ##################################
 class ServiceType
+  attr_accessor :dbMode
+  @dbMode=nil
   attr_accessor :name
   @name
   attr_accessor :type
@@ -15,6 +17,24 @@ class ServiceType
     end
     dao_name=name+'DAO'
     return dao_name
+  end
+
+  def iosModelName
+    if name.index('DTO')
+      cdata_name=name.gsub('DTO','CD')
+      return cdata_name
+    end
+    cdata_name=name+'CD'
+    return cdata_name
+  end
+
+  def iosProviderName
+    if name.index('DTO')
+      provider_name=name.gsub('DTO','Provider')
+      return provider_name
+    end
+    provider_name=name+'Provider'
+    return provider_name
   end
   
   def isMultipart
@@ -38,7 +58,7 @@ class ServiceType
 
   def isResponse
     fields.each do |field|
-      if(field.javaName=="responseCode")
+      if(field.javaName=="responseCode" || field.iosName=="responseCode")
         return true
       end
     end
@@ -48,6 +68,32 @@ class ServiceType
   def javaInstanceName
     return name.slice(0,1).downcase + name.slice(1..-1)
   end
+
+  def onCoreData
+    return dbMode != nil
+  end
+
+  def coreDataIdField
+    result = "objectId"
+    fields.each do |field|
+      if(field.name == 'id')
+        result = field.iosName
+        break
+      end
+    end
+    return result
+  end
+
+  def coredataFields
+    result = ""
+    fields.each do |field|
+      if(field.iosBaseTypeCoreData)
+        result << ("\t\t<attribute name=\""+field.iosName+"\" optional=\"YES\" attributeType=\""+field.iosBaseTypeCoreData+"\" syncable=\"YES\"/>\n")
+      end
+    end
+    return result
+  end
+
   def baseArrayFields
     returnValues=Array.new
     fields.each do |field|

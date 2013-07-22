@@ -20,4 +20,14 @@ class Protocol
   @messages=nil
   attr_accessor :services
   @services=nil
+
+  def coreDataTypes
+    result = Array.new
+    types.each do |type|
+      if(type.onCoreData)
+        result << type
+      end
+    end
+    return result
+  end
 end

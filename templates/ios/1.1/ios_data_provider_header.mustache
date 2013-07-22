@@ -1,0 +1,36 @@
+//
+//  {{{className}}}.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+#define kNotification{{cdType.iosModelName}}UpdatedOnDB @"kNotification{{cdType.iosModelName}}UpdatedOnDB"
+
+@class {{cdType.name}};
+@class {{cdType.iosModelName}};
+
+@interface {{{className}}} : NSObject
+
+/**
+ * In this case update means update or insert if not found
+ */
++ ({{cdType.iosModelName}}*)update{{cdType.iosModelName}}FromDTO: ({{cdType.name}}*)dto andStoreIt:(BOOL) storeIt;
+
++ (NSArray*)getAllElements;
++ (NSInteger)getAllElementsCount;
++ (void)deleteElement: ({{cdType.iosModelName}}*) element;
++ (void)deleteAllElements;
+
+//Helper methods
++ (NSInteger)getElementsCountWithPredicate: (NSPredicate*) predicate;
++ (NSArray*)getElementsWithPredicate: (NSPredicate*) predicate andSortDescriptors: (NSArray*) sortDescriptors;
++ (void)deleteElementsWithPredicate: (NSPredicate*) predicate andSave: (BOOL) save;
++ (NSError*) saveAndInform;
+
+
+@end

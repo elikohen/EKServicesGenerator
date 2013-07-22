@@ -591,7 +591,7 @@
         </message>
     </messages>
     <types>
-        <type name="ActivityDTO">
+        <type name="ActivityDTO" dbMode="asdf">
             <field name="bnew" type="string"/>
             <field name="text" type="string"/>
             <field name="idcontact" type="string"/>
@@ -607,7 +607,7 @@
             <field name="number_type" type="string"/>
             <field name="datetime" type="string"/>
         </type>
-        <type name="ContactDTO">
+        <type name="ContactDTO" dbMode="asdf">
             <field name="personal_forwarding_calls" type="string"/>
             <field name="nickname" type="string"/>
             <field name="date_modified" type="string"/>
@@ -632,9 +632,9 @@
         </type>
         <type name="UserDTO">
             <field name="id_user" type="string"/>
-            <field name="authtoken" type="boolean"/>
+            <field name="authtoken" type="string"/>
             <field name="id_account" type="string"/>
-            <field name="fonyou_number" type="boolean"/>
+            <field name="fonyou_number" type="int"/>
             <field name="id_fonyou_number" type="string"/>
         </type>
         <type name="FonyouNumberDTO">

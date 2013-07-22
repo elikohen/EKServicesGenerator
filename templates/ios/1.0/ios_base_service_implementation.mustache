@@ -37,16 +37,16 @@
 		{{#request.fields}}
 
 			{{#isBoolean}}
-				NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}.boolValue ? @"true": @"false"];  
+				NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}.boolValue ? @"true": @"false"];  
 			{{/isBoolean}}
 			{{^isBoolean}}
 				NSString *string{{{nameUcase}}}=@"";
-				if({{{request.javaInstanceName}}}.{{{javaName}}})
+				if({{{request.javaInstanceName}}}.{{{iosName}}})
 				{
-				string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				if(!string{{{nameUcase}}})
 				{
-					string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}];
+					string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}];
 				}
 				
 				}							 
@@ -71,7 +71,7 @@
 		NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 
 		{{#request.fields}}
-		[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] forKey:@"{{{name}}}"];       
+		[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] forKey:@"{{{name}}}"];       
 		{{/request.fields}}
 
 		double time=[[NSDate date] timeIntervalSince1970];
@@ -254,16 +254,16 @@
 		url=[[{{{projectName}}}Helper sharedInstance] preInjectURLParameters:url withObject:{{{request.javaInstanceName}}}];
 		{{#request.fields}}
 			{{#isBoolean}}
-				NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}.boolValue ? @"true": @"false"];
+				NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}.boolValue ? @"true": @"false"];
 		    {{/isBoolean}}
 			{{^isBoolean}}
 				NSString *string{{{nameUcase}}}=@"";
-				if({{{request.javaInstanceName}}}.{{{javaName}}})
+				if({{{request.javaInstanceName}}}.{{{iosName}}})
 				{
-                    string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     if(!string{{{nameUcase}}})
                     {
-                        string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}];
+                        string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}];
                     }
 				}							 
 			{{/isBoolean}}
@@ -286,7 +286,7 @@
   		
 		NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 		{{#request.fields}}
-		[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{javaName}}}] forKey:@"{{{name}}}"];       
+		[dict setValue:[NSString stringWithFormat:@"%@",{{{request.javaInstanceName}}}.{{{iosName}}}] forKey:@"{{{name}}}"];       
 		{{/request.fields}}
 		double time=[[NSDate date] timeIntervalSince1970];
         [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];

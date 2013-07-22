@@ -16,31 +16,31 @@
 
 	{{#dto.baseFields}}
 	{{#isBoolean}}
-	[dict setValue:self.{{{javaName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
     {{/isBoolean}}
 	{{^isBoolean}}
-	[dict setValue:self.{{{javaName}}} forKey:@"{{{name}}}"];
+	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
 	{{/isBoolean}}
 	{{/dto.baseFields}}
 	{{#dto.baseArrayFields}}
     {{#isBoolean}})
-	[dict setValue:self.{{{javaName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
 	{{/isBoolean}}
     {{^isBoolean}}
-	[dict setValue:self.{{{javaName}}} forKey:@"{{{name}}}"];
+	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
 	{{/isBoolean}}
 	{{/dto.baseArrayFields}}
 	{{#dto.objectFields}}
-	NSDictionary *dict{{{javaName}}}=[self.{{{javaName}}} writeToDictionary];
-	[dict setValue:dict{{{javaName}}} forKey:@"{{{name}}}"];
+	NSDictionary *dict{{{iosName}}}=[self.{{{iosName}}} writeToDictionary];
+	[dict setValue:dict{{{iosName}}} forKey:@"{{{name}}}"];
 	{{/dto.objectFields}}
 	{{#dto.objectArrayFields}}
-	NSMutableArray *array{{{javaName}}}=[[NSMutableArray alloc]init];
-	for({{{iosBaseTypeSingular}}} *typeItem in self.{{{javaName}}}) {
-		NSDictionary *dict{{{javaName}}}=[typeItem writeToDictionary];
-		[array{{{javaName}}} addObject:dict{{{javaName}}}];
+	NSMutableArray *array{{{iosName}}}=[[NSMutableArray alloc]init];
+	for({{{iosBaseTypeSingular}}} *typeItem in self.{{{iosName}}}) {
+		NSDictionary *dict{{{iosName}}}=[typeItem writeToDictionary];
+		[array{{{iosName}}} addObject:dict{{{iosName}}}];
 	}
-	[dict setValue:array{{{javaName}}} forKey:@"{{{name}}}"];
+	[dict setValue:array{{{iosName}}} forKey:@"{{{name}}}"];
 	{{/dto.objectArrayFields}}
 
 	return dict;
@@ -50,11 +50,11 @@
 	{{{dto.name}}} *instance=[[{{{dto.name}}} alloc]init];
 
     {{#dto.objectArrayFields}}
-    instance.{{{javaName}}}=[[NSMutableArray alloc]init];
+    instance.{{{iosName}}}=[[NSMutableArray alloc]init];
     {{/dto.objectArrayFields}}
     {{#dto.baseFields}}
     if (![[dict objectForKey:@"{{{name}}}"] isKindOfClass:[NSNull class]]) {
-    	instance.{{{javaName}}}=[dict objectForKey:@"{{{name}}}"];
+    	instance.{{{iosName}}}=[dict objectForKey:@"{{{name}}}"];
     }
     {{/dto.baseFields}}
     {{#dto.baseArrayFields}}
@@ -63,11 +63,11 @@
 	for({{{iosBaseTypeSingular}}} *item in {{{name}}}Array) {
 		[{{{name}}}MutableArray addObject:item];
 	}
-	instance.{{{javaName}}}={{{name}}}MutableArray;
+	instance.{{{iosName}}}={{{name}}}MutableArray;
     {{/dto.baseArrayFields}}
     {{#dto.objectFields}}
 	if ([dict objectForKey:@"{{{name}}}"]) {
-        instance.{{{javaName}}}=[{{{type}}} readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
+        instance.{{{iosName}}}=[{{{type}}} readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
     }
     {{/dto.objectFields}}
     {{#dto.objectArrayFields}}
@@ -83,13 +83,13 @@
 			{{{iosBaseTypeSingular}}} *item=[{{{iosBaseTypeSingular}}} readFromDictionary:data];
 			[{{{name}}}MutableArray addObject:item];
 		}
-		instance.{{{javaName}}}={{{name}}}MutableArray;
+		instance.{{{iosName}}}={{{name}}}MutableArray;
 	}
 	else if ({{{name}}}Item) {
 		NSMutableArray *{{{name}}}MutableArray=[[NSMutableArray alloc]init];
 		{{{iosBaseTypeSingular}}} *item=[{{{iosBaseTypeSingular}}} readFromDictionary:{{{name}}}Item];
 		[{{{name}}}MutableArray addObject:item];
-		instance.{{{javaName}}}={{{name}}}MutableArray;
+		instance.{{{iosName}}}={{{name}}}MutableArray;
 	}
     {{/dto.objectArrayFields}}
 
