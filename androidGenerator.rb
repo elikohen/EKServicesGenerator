@@ -8,7 +8,7 @@ class AndroidGenerator
     ###################################
     parameters=Hash.new
     parameters['projectName']=projectName
-    parameters['packagename']=packageName
+    parameters['packagename']=packageName+".sgen"
     parameters['version']="1.0"
     parameters['dtos']=protocol.types
     parameters['version']=aVersion if aVersion
@@ -18,11 +18,13 @@ class AndroidGenerator
     puts 'DTOs'
     puts '-------------'
 
-    baseDTODir=aOutput+'/'+packageName.gsub('.','/')+"/model/dto/base/"
+    baseDir = aOutput+'/'+packageName.gsub('.','/')+"/sgen"
+
+    baseDTODir=baseDir+"/model/dto/base/"
     FileUtils.mkdir_p(baseDTODir)
 
     puts "\tCreating Utils ... \t FyResponse"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/model/dto/FyResponse.java"
+    helperFile=baseDir+"/model/dto/FyResponse.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/FyResponse.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
 
@@ -32,7 +34,7 @@ class AndroidGenerator
     File.open(baseDTOFile, 'w') { |file| file.write(res) }
 
     ############ Extended DTOs (Extended DTOs)
-    dtoDir=aOutput+'/'+packageName.gsub(".",'/')+"/model/dto/"
+    dtoDir=baseDir+"/model/dto/"
     FileUtils.mkdir_p(dtoDir)
     protocol.types.each do |type|
       puts "\tCreating DTO ... \t#{type.name}"
@@ -44,7 +46,7 @@ class AndroidGenerator
 
     if(aVersion && aVersion == "1.0")
         ############ DAO generation
-        daoDir=aOutput+'/'+packageName.gsub('.','/')+"/model/dao/"
+        daoDir=baseDir+"/model/dao/"
         FileUtils.mkdir_p(daoDir)
         puts 'DAOs'
         puts '-------------'
@@ -62,8 +64,8 @@ class AndroidGenerator
     ########### Services
     puts 'Services'
     puts '--------'
-    logicBaseDir=aOutput+'/'+packageName.gsub(".",'/')+"/logic/base"
-    logicDir=aOutput+'/'+packageName.gsub(".",'/')+"/logic"
+    logicBaseDir=baseDir+"/logic/base"
+    logicDir=baseDir+"/logic"
     FileUtils.mkdir_p(logicBaseDir)
     protocol.services.keys.each do |serviceKey|
       puts "\tCreating Service ... \t#{serviceKey}"
@@ -83,7 +85,7 @@ class AndroidGenerator
     protocol.services.keys.each do |serviceKey|
       protocol.services[serviceKey].messages.each do |message|
         puts "\tCreating Task ... \t#{message.name}Task"
-        taskFileDir=aOutput+'/'+packageName.gsub(".",'/')+"/tasks/"+serviceKey.downcase
+        taskFileDir=baseDir+"/tasks/"+serviceKey.downcase
         FileUtils.mkdir_p(taskFileDir)
         taskFile=taskFileDir+'/'+message.methodUpperCase+"Task.java"
         parameters['message']=message
@@ -93,17 +95,17 @@ class AndroidGenerator
       end
     end
     puts "\tCreating TaskUtil ... \tBetterHttpResponse"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/tasks/BetterHttpResponse.java"
+    helperFile=baseDir+"/tasks/BetterHttpResponse.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating TaskUtil ... \tBetterHttpResponseImpl"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/tasks/BetterHttpResponseImpl.java"
+    helperFile=baseDir+"/tasks/BetterHttpResponseImpl.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating TaskUtil ... \tNotifiedHttpRequest"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/tasks/NotifiedHttpRequest.java"
+    helperFile=baseDir+"/tasks/NotifiedHttpRequest.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
@@ -111,54 +113,54 @@ class AndroidGenerator
     ######### Utils
     puts 'UTILS'
     puts '--------------'
-    FileUtils.mkdir_p(aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/")
+    FileUtils.mkdir_p(baseDir+"/logic/utils/")
     puts "\tCreating Utils ... \t AdditionalICSKeyStoresSSLSocketFactory"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/AdditionalICSKeyStoresSSLSocketFactory.java"
+    helperFile=baseDir+"/logic/utils/AdditionalICSKeyStoresSSLSocketFactory.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/AdditionalICSKeyStoresSSLSocketFactory.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \t AdditionalKeyStoresSSLSocketFactory"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/AdditionalKeyStoresSSLSocketFactory.java"
+    helperFile=baseDir+"/logic/utils/AdditionalKeyStoresSSLSocketFactory.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/AdditionalKeyStoresSSLSocketFactory.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \tCustomSSLSocketFactory"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/CustomSSLSocketFactory.java"
+    helperFile=baseDir+"/logic/utils/CustomSSLSocketFactory.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/CustomSSLSocketFactory.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \t EasySSLSocketFactory"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/EasySSLSocketFactory.java"
+    helperFile=baseDir+"/logic/utils/EasySSLSocketFactory.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/EasySSLSocketFactory.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \t FakeSocketFactory"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/FakeSocketFactory.java"
+    helperFile=baseDir+"/logic/utils/FakeSocketFactory.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/FakeSocketFactory.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \t FakeTrustManager"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/FakeTrustManager.java"
+    helperFile=baseDir+"/logic/utils/FakeTrustManager.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/FakeTrustManager.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }  
 
     puts "\tCreating Utils ... \tHttpClientHelper"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/HttpClientHelper.java"
+    helperFile=baseDir+"/logic/utils/HttpClientHelper.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/HttpClientHelper.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \tServiceException"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/ServiceException.java"
+    helperFile=baseDir+"/logic/ServiceException.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \tServiceExceptionListener"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/ServiceExceptionListener.java"
+    helperFile=baseDir+"/logic/ServiceExceptionListener.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception_listener.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
     puts "\tCreating Utils ... \t TrivialTrustManager"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/utils/TrivialTrustManager.java"
+    helperFile=baseDir+"/logic/utils/TrivialTrustManager.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/TrivialTrustManager.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }    
 
@@ -166,7 +168,7 @@ class AndroidGenerator
     puts 'HELPERS'
     puts '--------------'
     puts "\tCreating Helper ... \t#{projectName}Helper"
-    helperFile=aOutput+'/'+packageName.gsub(".",'/')+"/logic/"+projectName+"Helper.java"
+    helperFile=baseDir+"/logic/"+projectName+"Helper.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/android_helper.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
 

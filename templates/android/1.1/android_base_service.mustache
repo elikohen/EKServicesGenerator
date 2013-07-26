@@ -116,7 +116,7 @@ public class Base{{{serviceName}}}Logic
 		// Obtenemos la URL del mensaje : {{{url}}}
 		String url="{{{url}}}";
 		url={{{projectName}}}Helper.getInstance().preInjectURLParameters(url,{{{request.javaInstanceName}}});
-		{{#request.fields}}
+		{{#fieldsInUrl}}
 		if({{{request.javaInstanceName}}}.get{{{nameUcase}}}()==null)
 		{
 			url=url.replace("${"+"{{{name}}}"+"}","");
@@ -125,7 +125,7 @@ public class Base{{{serviceName}}}Logic
 		{
 			url=url.replace("${"+"{{{name}}}"+"}",URLEncoder.encode(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}()),"UTF-8"));
 		}	
-		{{/request.fields}}
+		{{/fieldsInUrl}}
 		
 		url=fixSystemProperties(url);
 
@@ -138,7 +138,7 @@ public class Base{{{serviceName}}}Logic
 		HttpPost postRequest = new HttpPost(url);			
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		{{#request.fields}}
+		{{#fieldsNotInUrl}}
 		{{#isFile}}
 		reqEntity.addPart("{{{name}}}", new FileBody(new File(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())),"{{{mimeType}}}"));
 		{{/isFile}}
@@ -146,7 +146,7 @@ public class Base{{{serviceName}}}Logic
 	 	reqEntity.addPart("{{{name}}}", 
 			new StringBody(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())));
 		{{/isFile}}
-		{{/request.fields}}
+		{{/fieldsNotInUrl}}
 			
 		postRequest.setEntity(reqEntity);
 		{{{projectName}}}Helper.getInstance().preExecute(httpClient,postRequest,cookieStore,localContext);
@@ -169,9 +169,9 @@ public class Base{{{serviceName}}}Logic
 		{{#isWrite}}
 		{{^isDelete}}
 		List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 
-		{{#request.fields}}
-	 	parameters.add(new BasicNameValuePair("{{{name}}}", 		String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())));       
-		{{/request.fields}}
+		{{#fieldsNotInUrl}}
+	 	parameters.add(new BasicNameValuePair("{{{name}}}", String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())));       
+		{{/fieldsNotInUrl}}
 		request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 		{{/isDelete}}
 		{{/isWrite}}
