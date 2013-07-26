@@ -226,15 +226,17 @@
 		
     if(!error) {
     	{{#response.isRawData}}
+    	if(!data || data.length == 0) data = nil;
     	result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
     	{{/response.isRawData}}
     	{{^response.isRawData}}
     	id json = nil;
-    	if(data){
+    	if(data && data.length > 0){
 	    	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 			stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
-			data = [stringData dataUsingEncoding:NSUTF8StringEncoding];
-	        json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+	        json = [NSJSONSerialization JSONObjectWithData:[stringData dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&error];
+    	} else{
+    		data = nil;
     	}
         _ModelGenLog(@"JSON: %@",json);
         if([json isKindOfClass:[NSArray class]]){
