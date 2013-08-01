@@ -9,7 +9,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class {{{projectName}}}Response;
+@class ServiceResponse;
 
 @interface {{{projectName}}}Helper : NSObject
 
@@ -23,6 +23,6 @@
 - (NSMutableURLRequest*) customizeRequest:(NSMutableURLRequest*)request;
 - (void) preprocessResponse: (NSURLResponse*) response;
 - (NSString *) preprocessData:(NSString *)responseString;
-- (BOOL) checkCorrectResponse: ({{{projectName}}}Response*) response serviceTag:(NSInteger) tag;
+- (BOOL) checkCorrectResponse: (ServiceResponse*) response serviceTag:(NSInteger) tag;
 - (BOOL) checkConnection;
 @end

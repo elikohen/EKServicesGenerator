@@ -16,7 +16,7 @@
 #import "{{response.name}}.h"
 {{/response.isRawData}}
 {{/imports}}
-#import "{{{projectName}}}Response.h"
+#import "ServiceResponse.h"
 
 @implementation Base{{{serviceName}}}Logic
 
@@ -63,7 +63,7 @@
 		NSError *error;
 		BOOL networkError = ![[{{projectName}}Helper sharedInstance] checkConnection];
 		
-		{{projectName}}Response *response = nil;
+		ServiceResponse *response = nil;
 		if(!networkError){
 			response = [self {{method}}:request onError:&error];
 		}
@@ -94,7 +94,7 @@
  * @param {{{request.name}}} Petición al servicio
  * @returns {{{response.name}}} Respuesta del servidor
  */
--({{{projectName}}}Response *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError
+-(ServiceResponse *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError
 {
 	NSString *url=@"{{{url}}}";
 	
@@ -137,7 +137,7 @@
     [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];
     {{/isWrite}}
 	
-	{{{projectName}}}Response *result = nil;
+	ServiceResponse *result = nil;
 
 	NSError *error=nil;
 	NSString *escapedUrl = [[{{{projectName}}}Helper sharedInstance] escapeUrl:url];
@@ -227,7 +227,7 @@
     if(!error) {
     	{{#response.isRawData}}
     	if(!data || data.length == 0) data = nil;
-    	result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
+    	result = [[ServiceResponse alloc] initWithData:data andResponse:response];
     	{{/response.isRawData}}
     	{{^response.isRawData}}
     	id json = nil;
@@ -246,14 +246,14 @@
 				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
 				[arrayData addObject:dtoData];
 			}
-			result = [[{{{projectName}}}Response alloc] initWithData:arrayData andResponse:response];
+			result = [[ServiceResponse alloc] initWithData:arrayData andResponse:response];
 		}
 		else if([json isKindOfClass:[NSDictionary class]]){
 			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
-        	result = [[{{{projectName}}}Response alloc] initWithData:dtoData andResponse:response];
+        	result = [[ServiceResponse alloc] initWithData:dtoData andResponse:response];
 		}
 		else{
-			result = [[{{{projectName}}}Response alloc] initWithData:data andResponse:response];
+			result = [[ServiceResponse alloc] initWithData:data andResponse:response];
 		}
 		{{/response.isRawData}}
     } else {

@@ -94,11 +94,11 @@ class IOSGenerator
     ############ Response object
     puts 'Response object'
     puts '-------------'
-    puts "\tCreating Response ... \t"+project_name+"Response"
+    puts "\tCreating Response ... \tServiceResponse"
     res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_response_header.mustache').read,parameters)
-    File.open(ios_output+'/gen/Model/'+project_name+"Response.h", 'w') { |file| file.write(res) }
+    File.open(ios_output+'/gen/Model/ServiceResponse.h', 'w') { |file| file.write(res) }
     res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_response_implementation.mustache').read,parameters)
-    File.open(ios_output+'/gen/Model/'+project_name+"Response.m", 'w') { |file| file.write(res) }
+    File.open(ios_output+'/gen/Model/ServiceResponse.m', 'w') { |file| file.write(res) }
 
     ########### BASE SERVICES
     base_service_dir=ios_output+'/gen/Logic/Base'

@@ -9,13 +9,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import "{{projectName}}Response.h"
+#import "ServiceResponse.h"
 
 @protocol ServiceDelegate <NSObject>
 
 @required
-- (void) onTaskSuccess:({{projectName}}Response*) response withTag: (NSInteger) tag;
-- (void) onTaskFailed:({{projectName}}Response*) response withTag: (NSInteger) tag;
+- (void) onTaskSuccess:(ServiceResponse*) response withTag: (NSInteger) tag;
+- (void) onTaskFailed:(ServiceResponse*) response withTag: (NSInteger) tag;
 - (void) onTaskNoConnection: (NSInteger) tag;
 - (void) onTaskError: (NSError*) error withTag: (NSInteger) tag;
 

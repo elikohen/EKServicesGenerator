@@ -8,7 +8,7 @@
 //
 
 #import "{{{projectName}}}Helper.h"
-#import "{{projectName}}Response.h"
+#import "ServiceResponse.h"
 
 @interface {{{projectName}}}Helper ()
 
@@ -81,7 +81,7 @@
     return request;
 }
 
-- (BOOL) checkCorrectResponse: ({{{projectName}}}Response*) response serviceTag:(NSInteger) tag{
+- (BOOL) checkCorrectResponse: (ServiceResponse*) response serviceTag:(NSInteger) tag{
   return YES;
 }
 - (BOOL) checkConnection{

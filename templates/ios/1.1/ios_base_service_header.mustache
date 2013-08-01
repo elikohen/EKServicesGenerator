@@ -27,7 +27,7 @@
 
 #endif // _ModelGenLog
 
-@class {{projectName}}Response;
+@class ServiceResponse;
 
 @interface Base{{{serviceName}}}Logic : NSObject
 
@@ -60,9 +60,9 @@
 /**
  * Método {{{method}}}: {{{description}}}
  * @param {{{request.javaInstanceName}}} Encapsulación de datos de petición al servicio
- * @returns {{projectName}}Response Encapsulación respuesta del servidor
+ * @returns ServiceResponse Encapsulación respuesta del servidor
  */
--({{projectName}}Response *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError;
+-(ServiceResponse *) {{{method}}}:({{{request.name}}} *){{{request.javaInstanceName}}} onError:(NSError *__autoreleasing *)inError;
 
 {{/service.messages}}
 @end
