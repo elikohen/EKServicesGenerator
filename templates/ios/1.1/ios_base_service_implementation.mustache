@@ -232,9 +232,8 @@
     	{{^response.isRawData}}
     	id json = nil;
     	if(data && data.length > 0){
-	    	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-			stringData =[[{{{projectName}}}Helper sharedInstance] preprocessData:stringData];
-	        json = [NSJSONSerialization JSONObjectWithData:[stringData dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&error];
+			NSData *postProcessData =[[{{{projectName}}}Helper sharedInstance] preprocessData:data];
+	        json = [NSJSONSerialization JSONObjectWithData:postProcessData options:kNilOptions error:&error];
     	} else{
     		data = nil;
     	}

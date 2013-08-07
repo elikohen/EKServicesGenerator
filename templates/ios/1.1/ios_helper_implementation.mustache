@@ -65,8 +65,8 @@
   //Custom processing (This is a good place to check responseCode)
 }
 
-- (NSString *) preprocessData:(NSString *)responseString {
-  return responseString;
+- (NSData *) preprocessData:(NSData *)responseData {
+  return responseData;
 }
 
 - (NSMutableURLRequest*) customizeRequest:(NSMutableURLRequest*)request {

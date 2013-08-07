@@ -22,7 +22,7 @@
 - (NSString *) escapeUrl:(NSString *)url;
 - (NSMutableURLRequest*) customizeRequest:(NSMutableURLRequest*)request;
 - (void) preprocessResponse: (NSURLResponse*) response;
-- (NSString *) preprocessData:(NSString *)responseString;
+- (NSData *) preprocessData:(NSData *)responseData;
 - (BOOL) checkCorrectResponse: (ServiceResponse*) response serviceTag:(NSInteger) tag;
 - (BOOL) checkConnection;
 @end
