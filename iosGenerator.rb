@@ -51,7 +51,7 @@ class IOSGenerator
       res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_manager_implementation.mustache').read,parameters)
       File.open(data_dir+"/CoreDataManager.m", 'w') { |file| file.write(res) }
       coreDataTypes.each do |cdType|
-        puts "\tCreating DTO ... \t#{cdType.iosModelName}"
+        puts "\tCreating CoreDataObject ... \t#{cdType.iosModelName}"
         data_header_file=data_dir+'/'+cdType.iosModelName+'.h'
         data_implementation_file=data_dir+'/'+cdType.iosModelName+'.m'
         parameters['className']=cdType.iosModelName

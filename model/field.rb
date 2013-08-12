@@ -36,11 +36,14 @@ class Field
   end
   def iosName
     iosname = name
+
+    ## id is a reserved word so change id by [thenameoftheclass]Id
     if(iosname == 'id' && parentName)
       aux = parentName.downcase
       aux = aux.gsub("dto", "")
       iosname = aux+"Id"
       return iosname
+    ## If there's no name of the class just change by objectId
     elsif(iosname == 'id')
       return 'objectId'
     end
@@ -48,6 +51,8 @@ class Field
   end
   def iosCustomGetter
     javaname = self.javaName
+
+    ## properties that generate getters starting by new are not allowed so change getter by getNew...
     if(javaName.start_with?('new'))
       getter = 'get'+javaname[0].upcase+javaname[1..-1]
       return ", getter=#{getter}"
