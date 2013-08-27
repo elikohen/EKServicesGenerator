@@ -197,8 +197,8 @@
     {{/isGet}}
 
 	request = [[{{{projectName}}}Helper sharedInstance] customizeRequest:request];
-    {{#isHttps}}
-    
+
+#ifdef NO_SSL_VALIDATION
 	self.receivedData = [[NSMutableData alloc] init];
 	self.receivedResponse = nil;
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -214,13 +214,12 @@
     NSURLResponse *response = self.receivedResponse;
 	NSData *data = self.receivedData;
 	error = self.error;
-	{{/isHttps}}
-    {{^isHttps}}
+#else
 
 	NSURLResponse *response = nil;
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 
-	{{/isHttps}}
+#endif
 
 	[[{{{projectName}}}Helper sharedInstance] preprocessResponse:response];
 		
