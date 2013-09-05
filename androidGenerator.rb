@@ -162,7 +162,12 @@ class AndroidGenerator
     puts "\tCreating Utils ... \t TrivialTrustManager"
     helperFile=baseDir+"/logic/utils/TrivialTrustManager.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/TrivialTrustManager.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }    
+    File.open(helperFile, 'w') { |file| file.write(res) } 
+
+    puts "\tCreating Utils ... \t RawData"
+    helperFile=baseDir+"/logic/utils/RawData.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/RawData.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) } 
 
     ############ Helper if needed
     puts 'HELPERS'

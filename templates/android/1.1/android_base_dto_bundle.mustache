@@ -242,7 +242,7 @@ public class {{{projectName}}}DTOBundle
 			return null;
 			{{/isResponse}}
 		}
-
+		{{^hasDescriptionField}}
 		public String getDescription(){
 			{{#isResponse}}
 			return responseDescription;
@@ -251,6 +251,7 @@ public class {{{projectName}}}DTOBundle
 			return null;
 			{{/isResponse}}
 		}
+		{{/hasDescriptionField}}
 		{{/fyMode}}
 		
 		@Override

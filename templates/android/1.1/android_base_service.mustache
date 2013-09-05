@@ -15,6 +15,7 @@ import {{{packagename}}}.logic.utils.*;
 import {{{packagename}}}.tasks.BetterHttpResponse;
 import {{{packagename}}}.tasks.BetterHttpResponseImpl;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -112,7 +113,6 @@ public class Base{{{serviceName}}}Logic
 		{{#onSend}}
 			{{{onSend}}}({{{request.javaInstanceName}}});
 		{{/onSend}}
-		{{{response.name}}} {{{response.javaInstanceName}}};
 		// Obtenemos la URL del mensaje : {{{url}}}
 		String url="{{{url}}}";
 		url={{{projectName}}}Helper.getInstance().preInjectURLParameters(url,{{{request.javaInstanceName}}});
@@ -132,7 +132,6 @@ public class Base{{{serviceName}}}Logic
 		url=url.replace("|",URLEncoder.encode("|","UTF-8"));
 		url={{{projectName}}}Helper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT:"+url);
-		String result;
 		{{#request.multipart}}
 		DefaultHttpClient httpClient = HttpClientHelper.getInstance().getHttpClient();
 		HttpPost postRequest = new HttpPost(url);			
@@ -160,7 +159,7 @@ public class Base{{{serviceName}}}Logic
 		while ((sResponse = reader.readLine()) != null) {
 			s = s.append(sResponse);
 		}
-		result=s.toString();
+		String result=s.toString();
 		{{/request.multipart}}
 		{{^request.multipart}}
 		DefaultHttpClient client = HttpClientHelper.getInstance().getHttpClient();
@@ -180,7 +179,7 @@ public class Base{{{serviceName}}}Logic
 		JSONObject jsonObject = {{{request.javaInstanceName}}}.serialize();
 		StringEntity requestEntity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT (application/json):"+jsonObject.toString());
-		requestEntity.setContentType("application/json");
+		requestEntity.setContentType("{{contentType}}");
 		request.setEntity(requestEntity);
 		{{/isDeleteJSON}}
 		{{/isWriteJSON}}
@@ -194,12 +193,21 @@ public class Base{{{serviceName}}}Logic
 		HttpResponse response = client.execute(request,localContext);
 		{{{projectName}}}Helper.getInstance().postExecute(client,request,response,cookieStore);
 		HttpEntity entity = response.getEntity();
-		result=convertStreamToString(entity.getContent());
+		{{^response.isRawData}}
+		String result=convertStreamToString(entity.getContent());
 		result={{{projectName}}}Helper.getInstance().preprocessResponse(result);
 		
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" RECEIVED:"+result);
+		{{/response.isRawData}}
+		{{#response.isRawData}}
+		RawData result=new RawData(convertStreamToBytes(entity.getContent()));
+		{{/response.isRawData}}
 		{{/request.multipart}}
-
+		{{#response.isRawData}}
+		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity,result);
+		{{/response.isRawData}}
+		{{^response.isRawData}}
+		{{{response.name}}} {{{response.javaInstanceName}}};
 		{{{response.javaInstanceName}}}={{{response.name}}}.create(new JSONObject(result));
 		{{#onReceive}}
 			{{{onReceive}}}({{{request.javaInstanceName}}},{{{response.javaInstanceName}}});
@@ -210,7 +218,7 @@ public class Base{{{serviceName}}}Logic
 		{{/fyMode}}
 
 		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity,{{{response.javaInstanceName}}});
-		
+		{{/response.isRawData}}
 		{{{method}}}LastResponse = responseImpl;
 		{{{method}}}LastResponseTime = new Date();
 		
@@ -239,6 +247,27 @@ public class Base{{{serviceName}}}Logic
 				sb.append(line + "\n");
 			}
 		return sb.toString();
+	}
+
+		/**
+	 * Lee el contenido de un stream como bytes
+	 * @param is InputStream del que leer
+	 * @return Bytes leidos
+	 * @throws IOException
+	 */
+	private byte[] convertStreamToBytes(InputStream is) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		int nRead;
+		byte[] data = new byte[16384];
+
+		while ((nRead = is.read(data, 0, data.length)) != -1) {
+		  buffer.write(data, 0, nRead);
+		}
+
+		buffer.flush();
+
+		return buffer.toByteArray();
 	}
 	
 	/**

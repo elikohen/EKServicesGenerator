@@ -94,6 +94,15 @@ class ServiceType
     return result
   end
 
+  def hasDescriptionField
+    fields.each do |field|
+      if(field.name == "description")
+        return true
+      end
+    end
+    return false
+  end
+
   def baseArrayFields
     returnValues=Array.new
     fields.each do |field|
