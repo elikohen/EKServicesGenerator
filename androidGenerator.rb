@@ -72,6 +72,7 @@ class AndroidGenerator
       logicBaseFile=logicBaseDir+"/Base"+serviceKey+"Logic.java"
       logicFile=logicDir+'/'+serviceKey+"Logic.java"
       parameters['serviceName']=serviceKey
+      parameters['serviceNameLower']=serviceKey.downcase
       parameters['messages']=protocol.services[serviceKey].messages
       parameters['service']=protocol.services[serviceKey];
       res=Mustache.render(File.open("templates/android/"+aVersion+"/android_base_service.mustache").read,parameters)

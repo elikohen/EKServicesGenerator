@@ -83,6 +83,10 @@ class Message
     return method.slice(0,1).capitalize + method.slice(1..-1)
   end
 
+  def emptyParams?
+    return request.fields.empty?
+  end
+
   def javaRequestParams
     params=Array.new
     request.fields.each do |field|

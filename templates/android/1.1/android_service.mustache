@@ -8,7 +8,12 @@
 */
 package {{{packagename}}}.logic;
 
+import java.util.List;
+
 import {{{packagename}}}.logic.base.*;
+import {{{packagename}}}.model.dto.*;
+import com.test.android.sgen.tasks.NotifiedHttpRequest;
+import {{{packagename}}}.tasks.{{{serviceNameLower}}}.*;
 
 
 /**
@@ -37,5 +42,21 @@ public class {{{serviceName}}}Logic extends Base{{{serviceName}}}Logic
     public static {{{serviceName}}}Logic getInstance() {
             return {{{serviceName}}}Holder.instance;
     }
+
+    {{#messages}}
+
+    public static void {{{method}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
+      {{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
+      {{#request.fields}}
+      {{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
+      {{/request.fields}}
+      {{{method}}}({{{request.javaInstanceName}}}, listener, tag);
+    }
+
+    public static void {{{method}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
+      new {{{methodUpperCase}}}Task(listener,tag).execute({{{request.javaInstanceName}}});
+    }
+
+    {{/messages}}
 
 }
