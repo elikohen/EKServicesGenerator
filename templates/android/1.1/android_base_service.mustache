@@ -61,7 +61,9 @@ import org.apache.http.protocol.HttpContext;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 
 /**
@@ -172,6 +174,7 @@ public class Base{{{serviceName}}}Logic
 	 	parameters.add(new BasicNameValuePair("{{{name}}}", String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())));       
 		{{/fieldsNotInUrl}}
 		request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+		request.addHeader("Content-Type", "{{contentType}}");
 		{{/isDelete}}
 		{{/isWrite}}
 		{{#isWriteJSON}}
@@ -207,17 +210,31 @@ public class Base{{{serviceName}}}Logic
 		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity,result);
 		{{/response.isRawData}}
 		{{^response.isRawData}}
-		{{{response.name}}} {{{response.javaInstanceName}}};
-		{{{response.javaInstanceName}}}={{{response.name}}}.create(new JSONObject(result));
-		{{#onReceive}}
-			{{{onReceive}}}({{{request.javaInstanceName}}},{{{response.javaInstanceName}}});
-		{{/onReceive}}
-
-		{{#fyMode}}
-		{{{projectName}}}Helper.getInstance().preprocessResponse({{{response.javaInstanceName}}});
-		{{/fyMode}}
-
-		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity,{{{response.javaInstanceName}}});
+		Object objectResponse = null;
+		if(result.length() > 0){
+			Object json = new JSONTokener(result).nextValue();
+			if (json instanceof JSONObject){
+				{{{response.name}}} {{{response.javaInstanceName}}};
+				{{{response.javaInstanceName}}}={{{response.name}}}.create((JSONObject)json);
+				{{#fyMode}}
+				{{{projectName}}}Helper.getInstance().preprocessResponse({{{response.javaInstanceName}}});
+				{{/fyMode}}
+				{{#onReceive}}
+				{{{onReceive}}}({{{request.javaInstanceName}}},{{{response.javaInstanceName}}});
+				{{/onReceive}}
+				objectResponse = {{{response.javaInstanceName}}};
+			}
+			else if (json instanceof JSONArray){
+				JSONArray jsonArray = (JSONArray)json;
+				List<{{{response.name}}}> listResponse = new ArrayList<{{{response.name}}}>();
+				for(int i = 0; i < jsonArray.length(); ++i){
+					JSONObject aJson = jsonArray.getJSONObject(i);
+					listResponse.add({{{response.name}}}.create(aJson));
+				}
+				objectResponse = listResponse;
+			}
+		}
+		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity, objectResponse);
 		{{/response.isRawData}}
 		{{{method}}}LastResponse = responseImpl;
 		{{{method}}}LastResponseTime = new Date();

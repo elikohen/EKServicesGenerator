@@ -16,7 +16,7 @@
             <response name='AddressBookDTO'/>
         </message>
         <!--  OK -->
-        <message name='getAddressBookInfo' service='AddressBook' method='getAddressBookInfo' description='' type='Get'>
+        <!-- <message name='getAddressBookInfo' service='AddressBook' method='getAddressBookInfo' description='' type='Get'>
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/adb/${id_addressbook}'/>
             </urlPattern>
@@ -27,7 +27,7 @@
                 <field name='id_addressbook' type='string'/>
             </request>
             <response name='AddressBookDTO'/>
-        </message>
+        </message> -->
         <!-- OK: Requiere id_contact=0 date y items=-1 (es incremental)-->
         <message name='getContactsList' service='AddressBook' method='getContactsList' description='' type='Get'>
             <urlPattern>
@@ -286,7 +286,7 @@
             <response name='ActivityDTO'/>
         </message>
         <!-- OK: pasar date 3000 y phone 0 --> 
-        <message name='getFonyouNumberSMS' service='Activity' method='getFonyouNumberSMS' description='' type='Get'>
+<!--         <message name='getFonyouNumberSMS' service='Activity' method='getFonyouNumberSMS' description='' type='Get'>
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/act/sms/?date=${date}&amp;phone=${phone}'/>
             </urlPattern>
@@ -298,7 +298,7 @@
                 <field name='phone' type='string'/>
             </request>
             <response name='ActivityDTO'/>
-        </message>
+        </message> -->
         <!-- OK: RAW DATA -->
         <message name='getVoiceMessageFile' service='Activity' method='getVoiceMessageFile' description='' type='Get'>
             <urlPattern>
@@ -413,7 +413,7 @@
             <response name='UserInfoDTO'/>
         </message>
         <!-- OK  -->
-        <message name='postWebCall' service='UserInfo' method='postWebCall' description='' type='PostJSON'>
+<!--         <message name='postWebCall' service='UserInfo' method='postWebCall' description='' type='PostJSON'>
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/call/'/>
             </urlPattern>
@@ -424,8 +424,8 @@
                 <field name='destination' type="string"/>
             </request>
             <response name='StatusDTO'/>
-        </message>
-        <!-- JORDI PENDING - INTERNAL SERVER ERROR  -->
+        </message> -->
+        <!-- OK  -->
         <message name='postGreeting' service='Greeting' method='postGreeting' description='' type='PostJSON'>
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/'/>
@@ -457,7 +457,7 @@
             </request>
             <response name='GreetingDTO'/>
         </message>
-        <!-- PENDIENTE INTERNAL SERVER ERROR  -->
+        <!-- OK  -->
         <message name='deleteGreetingFile' service='Greeting' method='deleteGreetingFile' description='' type='Delete'>
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/grt/${id_greeting}/'/>
@@ -484,7 +484,7 @@
             <response type='raw'/>
         </message>
 		<!-- Poner application/json aunque se envien como form params OK -->
-		<message name="msisdnLogin" service="Session" method="msisdnLogin" description='' type='Post' content_type="application/json">
+<!-- 		<message name="msisdnLogin" service="Session" method="msisdnLogin" description='' type='Post' content_type="application/json">
 			<urlPattern>
                 <url address='${base_url}/srv/ssomsisdn/'/>
             </urlPattern>
@@ -496,15 +496,15 @@
 				<field name='token' type='string'/>
 				<field name='msisdns' type='MsisdnDTO*'/>
 			</response>
-		</message>
+		</message> -->
         <!-- Poner application/json aunque se envien como form params OK -->
         <message name='login' service='Session' method='login' description='' type='Post' content_type="application/json">
             <urlPattern>
                 <url address='${base_url}/srv/login/'/>
             </urlPattern>
             <request name='LoginRequestDTO'>
-                <field name='msisdn' type='string'/>
-                <field name='token' type='string'/>
+                <field name='username' type='string'/>
+                <field name='password' type='string'/>
             </request>
             <response name='UserDTO'/>
         </message>
@@ -521,7 +521,7 @@
             <response name='StatusDTO'/>
         </message>
 		<!-- OK -->
-        <message name='unSubscribe' service='Session' method='unSubscribe' description='' type='Post' content_type="application/json">
+<!--         <message name='unSubscribe' service='Session' method='unSubscribe' description='' type='Post' content_type="application/json">
             <urlPattern>
                 <url address='${base_url}/acc/${id_account}/usr/${id_user}/fyn/${id_fonyou_number}/unsubscribe/'/>
             </urlPattern>
@@ -531,7 +531,7 @@
                 <field name='id_fonyou_number' type='string'/>
             </request>
             <response name='StatusDTO'/>
-        </message>
+        </message> -->
 		<!--  -->
 		<message name="getConfig" service="Common" method="getConfig" description="" type="Get">
 		    <urlPattern>
@@ -540,10 +540,10 @@
 		    <request name="GetConfigRequestDTO">
 		    </request>
 		    <response name="GetConfigResponseDTO">
-		    	<field name="url_appstore" type="string" />
-		    	<field name="force_update" type="string"/>
-				<field name="suggest_update" type="string" />
-		    	<field name="appstore_version" type="string"/>
+		    	<field name="urlAppStore" type="string" />
+		    	<field name="forceUpdate" type="Boolean"/>
+				<field name="suggestUpdate" type="Boolean" />
+		    	<field name="appStoreVersion" type="string"/>
 			</response>
 		</message>
     </messages>
@@ -592,10 +592,11 @@
         </type>
         <type name="UserDTO">
             <field name="id_user" type="string"/>
-            <field name="authtoken" type="string"/>
+            <field name="token" type="string"/>
             <field name="id_account" type="string"/>
             <field name="fonyou_number" type="string"/>
             <field name="id_fonyou_number" type="string"/>
+            <field name="status" type="string" description="In case login fails, just status is returned"/>
         </type>
         <type name="UserInfoDTO">
             <field name="new_voice_messages" type="int"/>
