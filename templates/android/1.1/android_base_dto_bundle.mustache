@@ -21,7 +21,7 @@ public class {{{projectName}}}DTOBundle
 	/**
 	 * DTO que define la clase {{{name}}}
 	 */
-	public static class Base{{{name}}} implements {{#fyMode}}FyResponse,{{/fyMode}} Parcelable
+	public static class Base{{{name}}} implements Validable, Parcelable
 	{
 
 		// Constantes para la lectura de campos de los JSON
@@ -224,7 +224,6 @@ public class {{{projectName}}}DTOBundle
 		}
 		{{/fields}}
 
-		{{#fyMode}}
 		public boolean isValid(){
 			{{#isResponse}}
 			return (responseCode != null && responseCode.equals("000"));
@@ -233,26 +232,6 @@ public class {{{projectName}}}DTOBundle
 			return true;
 			{{/isResponse}}
 		}
-
-		public String getCode(){
-			{{#isResponse}}
-			return responseCode;
-			{{/isResponse}}
-			{{^isResponse}}
-			return null;
-			{{/isResponse}}
-		}
-		{{^hasDescriptionField}}
-		public String getDescription(){
-			{{#isResponse}}
-			return responseDescription;
-			{{/isResponse}}
-			{{^isResponse}}
-			return null;
-			{{/isResponse}}
-		}
-		{{/hasDescriptionField}}
-		{{/fyMode}}
 		
 		@Override
 		public int describeContents() {

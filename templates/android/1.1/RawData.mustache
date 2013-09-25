@@ -7,11 +7,11 @@
   Version: {{version}}
 */
 
-package {{{packagename}}}.logic.utils;
+package {{{packagename}}}.model.dto;
 
-import {{{packagename}}}.model.dto.FyResponse;
+import {{{packagename}}}.model.dto.Validable;
 
-public class RawData implements FyResponse{
+public class RawData implements Validable{
 	
 	private final byte[] mData;
 	
@@ -22,16 +22,6 @@ public class RawData implements FyResponse{
 	@Override
 	public boolean isValid() {
 		return mData != null;
-	}
-
-	@Override
-	public String getCode() {
-		return "000";
-	}
-
-	@Override
-	public String getDescription() {
-		return null;
 	}
 	
 	public byte[] getData(){

@@ -1,0 +1,88 @@
+/**
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2013 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.loaders;
+
+import org.apache.http.conn.HttpHostConnectException;
+
+import android.os.Handler;
+import android.os.Message;
+
+import {{{packagename}}}.model.dto.Validable;
+
+public abstract class ConnectionLoader<T> extends Handler implements Runnable{
+	
+	final T mRequest;
+	final NotifiedHttpRequest mListener;
+	final int mTag;
+	
+	BetterHttpResponse mResponse = null;
+	Exception mException = null;
+	
+	public ConnectionLoader(T request, NotifiedHttpRequest listener, int tag){
+		mRequest = request;
+		mListener = listener;
+		mTag = tag;
+	}
+	
+	/*
+	 * BACKGROUND EXECUTION
+	 */
+	@Override
+	public void run() {
+		
+		try{
+			mResponse = doInBackground(mRequest);
+		}
+		catch(Exception ex){
+			mException = ex;
+		}
+		
+		Message message = new Message();
+		message.setTarget(this);
+		message.what = mTag;
+		message.sendToTarget();
+	}
+	
+	protected abstract BetterHttpResponse doInBackground(T request) throws Exception;
+	
+	
+	/*
+	 * MAIN THREAD EXECUTION
+	 */
+	
+	public void handleMessage(Message msg) {		
+		if(mListener != null){
+			if(mException != null){
+				if (mException.getCause() instanceof HttpHostConnectException) {
+					mListener.notifyNoConnection(mTag);
+				}
+				else{
+					mListener.notifyErrorConnecting(mException, mTag);
+				}
+			}
+			else if(mResponse.getStatusCode() == 200){
+				if(mResponse instanceof Validable){
+					Validable data = (Validable)mResponse.getDataObject();
+					if(data.isValid()){
+						mListener.notifySuccess(mResponse, mTag);
+					}
+					else{
+						mListener.notifyError(mResponse, mTag);
+					}
+				}
+				else{
+					mListener.notifySuccess(mResponse, mTag);
+				}
+			}
+			else{
+				mListener.notifyError(mResponse, mTag);
+			}
+		}
+	}		
+}

@@ -2,18 +2,20 @@
   {{{serviceName}}} Service
   {{{projectName}}}
 
-  Created by Generator on 19/01/12.
-  Copyright (c) 2012 EKGDev. All rights reserved.
+  Created by Generator
+  Copyright (c) 2013 EKGDev. All rights reserved.
   Version: {{{version}}}
 */
 package {{{packagename}}}.logic;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import {{{packagename}}}.logic.base.*;
 import {{{packagename}}}.model.dto.*;
-import {{{packagename}}}.tasks.NotifiedHttpRequest;
-import {{{packagename}}}.tasks.{{{serviceNameLower}}}.*;
+import {{{packagename}}}.loaders.NotifiedHttpRequest;
+import {{{packagename}}}.loaders.{{{serviceName}}}Loaders.*;
 
 
 /**
@@ -22,10 +24,13 @@ import {{{packagename}}}.tasks.{{{serviceNameLower}}}.*;
  */
 public class {{{serviceName}}}Logic extends Base{{{serviceName}}}Logic
 {
+    private ThreadPoolExecutor mExecutor;
 /**
 	 * Evitamos que se reinicialice mediante un constructor privado
 	 */
-    private {{{serviceName}}}Logic() { }
+    private {{{serviceName}}}Logic() { 
+      mExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(4);
+    }
 
     /**
     * Solo se va a ejecutar la primera vez, y nos va a instanciar el objeto
@@ -54,7 +59,7 @@ public class {{{serviceName}}}Logic extends Base{{{serviceName}}}Logic
     }
 
     public static void {{{method}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
-      new {{{methodUpperCase}}}Task(listener,tag).execute({{{request.javaInstanceName}}});
+      getInstance().mExecutor.execute(new {{{methodUpperCase}}}Loader({{{request.javaInstanceName}}},listener,tag));
     }
 
     {{/messages}}

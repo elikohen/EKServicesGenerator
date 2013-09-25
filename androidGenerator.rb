@@ -9,7 +9,7 @@ class AndroidGenerator
     parameters=Hash.new
     parameters['projectName']=projectName
     parameters['packagename']=packageName+".sgen"
-    parameters['version']="1.0"
+    parameters['version']="1.1"
     parameters['dtos']=protocol.types
     parameters['version']=aVersion if aVersion
     parameters['fyMode']=1 if (mode && mode=='fonyou')
@@ -23,10 +23,22 @@ class AndroidGenerator
     baseDTODir=baseDir+"/model/dto/base/"
     FileUtils.mkdir_p(baseDTODir)
 
-    puts "\tCreating Utils ... \t FyResponse"
-    helperFile=baseDir+"/model/dto/FyResponse.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/FyResponse.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
+    if(aVersion && aVersion == "1.0")
+        puts "\tCreating Utils ... \t FyResponse"
+        helperFile=baseDir+"/model/dto/FyResponse.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/FyResponse.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
+    else
+        puts "\tCreating Utils ... \t Validable"
+        helperFile=baseDir+"/model/dto/Validable.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/Validable.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
+
+        puts "\tCreating Utils ... \t RawData"
+        helperFile=baseDir+"/model/dto/RawData.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/RawData.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) } 
+    end
 
     baseDTOFile=baseDTODir+'/'+projectName+"DTOBundle.java"
     puts "\tCreating Base DTO Bundle... \t#{projectName}DTOBundle"
@@ -59,14 +71,13 @@ class AndroidGenerator
         end
     end
 
-
-
     ########### Services
     puts 'Services'
     puts '--------'
     logicBaseDir=baseDir+"/logic/base"
     logicDir=baseDir+"/logic"
     FileUtils.mkdir_p(logicBaseDir)
+    FileUtils.mkdir_p(baseDir+"/loaders/")
     protocol.services.keys.each do |serviceKey|
       puts "\tCreating Service ... \t#{serviceKey}"
       logicBaseFile=logicBaseDir+"/Base"+serviceKey+"Logic.java"
@@ -79,37 +90,67 @@ class AndroidGenerator
       File.open(logicBaseFile, 'w') { |file| file.write(res) }
       res=Mustache.render(File.open("templates/android/"+aVersion+"/android_service.mustache").read,parameters)
       File.open(logicFile, 'w') { |file| file.write(res) }      unless File.exists?(logicFile)
-    end
-    ########## Tasks
-    puts 'Tasks'
-    puts '-------'
-    protocol.services.keys.each do |serviceKey|
-      protocol.services[serviceKey].messages.each do |message|
-        puts "\tCreating Task ... \t#{message.name}Task"
-        taskFileDir=baseDir+"/tasks/"+serviceKey.downcase
-        FileUtils.mkdir_p(taskFileDir)
-        taskFile=taskFileDir+'/'+message.methodUpperCase+"Task.java"
-        parameters['message']=message
-        parameters['service']=protocol.services[serviceKey]
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/android_tasks.mustache").read,parameters)
-        File.open(taskFile,"w"){|file| file.write(res)}
+
+      ##Loaders
+      if(aVersion && aVersion != "1.0")
+        loaderFile=baseDir+'/loaders/'+serviceKey+"Loaders.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/ConsumeLoaders.mustache").read,parameters)
+        File.open(loaderFile, 'w') { |file| file.write(res) }
       end
     end
-    puts "\tCreating TaskUtil ... \tBetterHttpResponse"
-    helperFile=baseDir+"/tasks/BetterHttpResponse.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }
+    ########## Tasks
 
-    puts "\tCreating TaskUtil ... \tBetterHttpResponseImpl"
-    helperFile=baseDir+"/tasks/BetterHttpResponseImpl.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }
+    if(aVersion && aVersion == "1.0")
+        puts 'Tasks'
+        puts '-------'
+        protocol.services.keys.each do |serviceKey|
+          protocol.services[serviceKey].messages.each do |message|
+            puts "\tCreating Task ... \t#{message.name}Task"
+            taskFileDir=baseDir+"/tasks/"+serviceKey.downcase
+            FileUtils.mkdir_p(taskFileDir)
+            taskFile=taskFileDir+'/'+message.methodUpperCase+"Task.java"
+            parameters['message']=message
+            parameters['service']=protocol.services[serviceKey]
+            res=Mustache.render(File.open("templates/android/"+aVersion+"/android_tasks.mustache").read,parameters)
+            File.open(taskFile,"w"){|file| file.write(res)}
+          end
+        end
 
-    puts "\tCreating TaskUtil ... \tNotifiedHttpRequest"
-    helperFile=baseDir+"/tasks/NotifiedHttpRequest.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }
+        puts "\tCreating TaskUtil ... \tBetterHttpResponse"
+        helperFile=baseDir+"/tasks/BetterHttpResponse.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
 
+        puts "\tCreating TaskUtil ... \tBetterHttpResponseImpl"
+        helperFile=baseDir+"/tasks/BetterHttpResponseImpl.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating TaskUtil ... \tNotifiedHttpRequest"
+        helperFile=baseDir+"/tasks/NotifiedHttpRequest.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+    else
+        puts "\tCreating LoaderUtil ... \tConnectionLoader"
+        helperFile=baseDir+"/loaders/ConnectionLoader.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/ConnectionLoader.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tBetterHttpResponse"
+        helperFile=baseDir+"/loaders/BetterHttpResponse.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tBetterHttpResponseImpl"
+        helperFile=baseDir+"/loaders/BetterHttpResponseImpl.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tNotifiedHttpRequest"
+        helperFile=baseDir+"/loaders/NotifiedHttpRequest.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+    end
 
     ######### Utils
     puts 'UTILS'
@@ -150,24 +191,21 @@ class AndroidGenerator
     res=Mustache.render(File.open("templates/android/"+aVersion+"/HttpClientHelper.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
-    puts "\tCreating Utils ... \tServiceException"
-    helperFile=baseDir+"/logic/ServiceException.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }
+    if(aVersion && aVersion == "1.0")
+        puts "\tCreating Utils ... \tServiceException"
+        helperFile=baseDir+"/logic/ServiceException.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
 
-    puts "\tCreating Utils ... \tServiceExceptionListener"
-    helperFile=baseDir+"/logic/ServiceExceptionListener.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception_listener.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) }
+        puts "\tCreating Utils ... \tServiceExceptionListener"
+        helperFile=baseDir+"/logic/ServiceExceptionListener.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/service_exception_listener.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+    end
 
     puts "\tCreating Utils ... \t TrivialTrustManager"
     helperFile=baseDir+"/logic/utils/TrivialTrustManager.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/TrivialTrustManager.mustache").read,parameters)
-    File.open(helperFile, 'w') { |file| file.write(res) } 
-
-    puts "\tCreating Utils ... \t RawData"
-    helperFile=baseDir+"/logic/utils/RawData.java"
-    res=Mustache.render(File.open("templates/android/"+aVersion+"/RawData.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) } 
 
     ############ Helper if needed

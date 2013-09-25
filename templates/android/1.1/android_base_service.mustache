@@ -12,15 +12,14 @@ package {{{packagename}}}.logic.base;
 import {{{packagename}}}.model.dto.*; 
 import {{{packagename}}}.logic.*;
 import {{{packagename}}}.logic.utils.*;
-import {{{packagename}}}.tasks.BetterHttpResponse;
-import {{{packagename}}}.tasks.BetterHttpResponseImpl;
+import {{{packagename}}}.loaders.BetterHttpResponse;
+import {{{packagename}}}.loaders.BetterHttpResponseImpl;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.util.Date;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -74,21 +73,16 @@ public class Base{{{serviceName}}}Logic
 {
 
 {{#messages}}
-	private BetterHttpResponse {{{method}}}LastResponse;
-	private Date {{{method}}}LastResponseTime;	
-{{/messages}}
-
-{{#messages}}
 	/**
 	 * Metodo {{{method}}}: {{{description}}}
 	{{#request.fields}}
 	 * @param {{{name}}} {{{comment}}}
 	{{/request.fields}}
 	 * @returns BetterHttpResponse Respuesta del servidor
-	 * @throws {{{packagename}}}.logic.ServiceException Error de comunicacion / datos 
+	 * @throws Exception Error de comunicacion / datos 
 	 */
 	 
-	public BetterHttpResponse {{{method}}}({{{javaRequestParams}}}) throws {{{packagename}}}.logic.ServiceException
+	public BetterHttpResponse {{{method}}}({{{javaRequestParams}}}) throws Exception
 	{		
 		{{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
 		{{#request.fields}}
@@ -102,12 +96,10 @@ public class Base{{{serviceName}}}Logic
 	 * Metodo {{{method}}}: {{{description}}}
 	 * @param {{{request.javaInstanceName}}} Peticion al servicio
 	 * @returns BetterHttpResponse Respuesta del servidor
-	 * @throws {{{packagename}}}.logic.ServiceException Error de comunicacion / datos 
+	 * @throws Exception Error de comunicacion / datos 
 	 */
-	public BetterHttpResponse {{{method}}}({{{request.name}}} {{{request.javaInstanceName}}}) throws {{{packagename}}}.logic.ServiceException
+	public BetterHttpResponse {{{method}}}({{{request.name}}} {{{request.javaInstanceName}}}) throws Exception
 	{
-		try
-		{
 		CookieStore cookieStore = new BasicCookieStore();	
 		HttpContext localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
@@ -216,9 +208,6 @@ public class Base{{{serviceName}}}Logic
 			if (json instanceof JSONObject){
 				{{{response.name}}} {{{response.javaInstanceName}}};
 				{{{response.javaInstanceName}}}={{{response.name}}}.create((JSONObject)json);
-				{{#fyMode}}
-				{{{projectName}}}Helper.getInstance().preprocessResponse({{{response.javaInstanceName}}});
-				{{/fyMode}}
 				{{#onReceive}}
 				{{{onReceive}}}({{{request.javaInstanceName}}},{{{response.javaInstanceName}}});
 				{{/onReceive}}
@@ -236,16 +225,8 @@ public class Base{{{serviceName}}}Logic
 		}
 		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity, objectResponse);
 		{{/response.isRawData}}
-		{{{method}}}LastResponse = responseImpl;
-		{{{method}}}LastResponseTime = new Date();
 		
 		return responseImpl;
-		}
-		catch(Exception ex)
-		{
-			ex.printStackTrace();
-			throw new {{{packagename}}}.logic.ServiceException(ex);
-		}
 	}
 {{/messages}}	
 	
@@ -305,22 +286,4 @@ public class Base{{{serviceName}}}Logic
 		return url;
 	}
 	
-{{#messages}}
-	/**
-	 * Obtiene la ultima respuesta cacheada de {{{methodUpperCase}}}
-	 * @returns valor cacheado
-	 */
-	public BetterHttpResponse get{{{methodUpperCase}}}LastResponse() {
-		return {{{method}}}LastResponse;
-	}
-
-	/**
-	 * Obtiene cuando se obtuvo la ultima respuesta cacheada de {{{methodUpperCase}}}
-	 * @returns ultima actualizacion
-	 */	
-	public Date get{{{methodUpperCase}}}LastResponseTime() {
-		return {{{method}}}LastResponseTime;
-	}	
-	
-{{/messages}}
 }

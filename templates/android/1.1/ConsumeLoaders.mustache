@@ -1,0 +1,30 @@
+/**
+  {{serviceName}}
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2013 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{packagename}}.loaders;
+
+import {{packagename}}.logic.*;
+import {{packagename}}.model.dto.*;
+
+public class {{serviceName}}Loaders {
+	{{#messages}}
+
+	public static class {{{methodUpperCase}}}Loader extends ConnectionLoader<{{{request.name}}}> {
+
+		public {{{methodUpperCase}}}Loader({{{request.name}}} request, NotifiedHttpRequest listener, int tag) {
+			super(request, listener, tag);
+		}
+
+		@Override
+		protected BetterHttpResponse doInBackground({{{request.name}}} request) throws Exception {
+			return {{serviceName}}Logic.getInstance().{{{method}}}(request);
+		}
+	}
+	{{/messages}}
+}

@@ -18,10 +18,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 
-{{#fyMode}}
-import {{{packagename}}}.model.dto.FyResponse;
-{{/fyMode}}
-
 public class {{{projectName}}}Helper
 {
 	private static {{{projectName}}}Helper instance=new {{{projectName}}}Helper();
@@ -63,10 +59,4 @@ public class {{{projectName}}}Helper
 	public String preprocessResponse(String responseString) {
 		return responseString;
 	}
-
-	{{#fyMode}}
-	public void preprocessResponse(FyResponse response) {
-		
-	}
-	{{/fyMode}}
 }

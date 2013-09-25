@@ -27,7 +27,7 @@ public class {{{message.methodUpperCase}}}Task extends AsyncTask<{{{message.requ
 
 	private NotifiedHttpRequest mListener = null;
 	private int mTag = -1;
-	private ServiceException mException = null;
+	private Exception mException = null;
 	
 	public {{{message.methodUpperCase}}}Task(NotifiedHttpRequest listener, int tag)
 	{
@@ -53,7 +53,7 @@ public class {{{message.methodUpperCase}}}Task extends AsyncTask<{{{message.requ
 			// Llamamos al servicio
 			response=execOnBackground(request);
 		}
-		catch(final {{{packagename}}}.logic.ServiceException ex)
+		catch(final Exception ex)
 		{
 			mException = ex;
 			if(!isCancelled())
@@ -78,18 +78,13 @@ public class {{{message.methodUpperCase}}}Task extends AsyncTask<{{{message.requ
 				}
 			}
 			else if(result.getStatusCode() == 200){
-				{{#fyMode}}
-				FyResponse data = (FyResponse)result.getDataObject();
+				Validable data = (Validable)result.getDataObject();
 				if(data.isValid()){
 					mListener.notifySuccess(result, mTag);
 				}
 				else{
 					mListener.notifyError(result, mTag);
 				}
-				{{/fyMode}}
-				{{^fyMode}}
-				mListener.notifySuccess(result, mTag);
-				{{/fyMode}}
 			}
 			else{
 				mListener.notifyError(result, mTag);
@@ -97,7 +92,7 @@ public class {{{message.methodUpperCase}}}Task extends AsyncTask<{{{message.requ
 		}
 	}
 
-	public BetterHttpResponse execOnBackground({{{message.request.name}}} request) throws {{{packagename}}}.logic.ServiceException
+	public BetterHttpResponse execOnBackground({{{message.request.name}}} request) throws Exception
 	{
 		return {{{message.service}}}Logic.getInstance().{{{message.method}}}(request);
 	}
