@@ -77,7 +77,6 @@ class AndroidGenerator
     logicBaseDir=baseDir+"/logic/base"
     logicDir=baseDir+"/logic"
     FileUtils.mkdir_p(logicBaseDir)
-    FileUtils.mkdir_p(baseDir+"/loaders/")
     protocol.services.keys.each do |serviceKey|
       puts "\tCreating Service ... \t#{serviceKey}"
       logicBaseFile=logicBaseDir+"/Base"+serviceKey+"Logic.java"
@@ -90,13 +89,6 @@ class AndroidGenerator
       File.open(logicBaseFile, 'w') { |file| file.write(res) }
       res=Mustache.render(File.open("templates/android/"+aVersion+"/android_service.mustache").read,parameters)
       File.open(logicFile, 'w') { |file| file.write(res) }      unless File.exists?(logicFile)
-
-      ##Loaders
-      if(aVersion && aVersion != "1.0")
-        loaderFile=baseDir+'/loaders/'+serviceKey+"Loaders.java"
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/ConsumeLoaders.mustache").read,parameters)
-        File.open(loaderFile, 'w') { |file| file.write(res) }
-      end
     end
     ########## Tasks
 
@@ -128,26 +120,6 @@ class AndroidGenerator
 
         puts "\tCreating TaskUtil ... \tNotifiedHttpRequest"
         helperFile=baseDir+"/tasks/NotifiedHttpRequest.java"
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
-        File.open(helperFile, 'w') { |file| file.write(res) }
-    else
-        puts "\tCreating LoaderUtil ... \tConnectionLoader"
-        helperFile=baseDir+"/loaders/ConnectionLoader.java"
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/ConnectionLoader.mustache").read,parameters)
-        File.open(helperFile, 'w') { |file| file.write(res) }
-
-        puts "\tCreating LoaderUtil ... \tBetterHttpResponse"
-        helperFile=baseDir+"/loaders/BetterHttpResponse.java"
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
-        File.open(helperFile, 'w') { |file| file.write(res) }
-
-        puts "\tCreating LoaderUtil ... \tBetterHttpResponseImpl"
-        helperFile=baseDir+"/loaders/BetterHttpResponseImpl.java"
-        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
-        File.open(helperFile, 'w') { |file| file.write(res) }
-
-        puts "\tCreating LoaderUtil ... \tNotifiedHttpRequest"
-        helperFile=baseDir+"/loaders/NotifiedHttpRequest.java"
         res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
         File.open(helperFile, 'w') { |file| file.write(res) }
     end
@@ -207,6 +179,28 @@ class AndroidGenerator
     helperFile=baseDir+"/logic/utils/TrivialTrustManager.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/TrivialTrustManager.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) } 
+
+    if(aVersion && aVersion != "1.0")
+        puts "\tCreating LoaderUtil ... \tConnectionLoader"
+        helperFile=baseDir+"/logic/utils/ConnectionLoader.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/ConnectionLoader.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tBetterHttpResponse"
+        helperFile=baseDir+"/logic/utils/BetterHttpResponse.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tBetterHttpResponseImpl"
+        helperFile=baseDir+"/logic/utils/BetterHttpResponseImpl.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+
+        puts "\tCreating LoaderUtil ... \tNotifiedHttpRequest"
+        helperFile=baseDir+"/logic/utils/NotifiedHttpRequest.java"
+        res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
+        File.open(helperFile, 'w') { |file| file.write(res) }
+    end
 
     ############ Helper if needed
     puts 'HELPERS'

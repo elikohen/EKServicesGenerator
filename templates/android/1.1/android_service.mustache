@@ -8,15 +8,7 @@
 */
 package {{{packagename}}}.logic;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import {{{packagename}}}.logic.base.*;
-import {{{packagename}}}.model.dto.*;
-import {{{packagename}}}.loaders.NotifiedHttpRequest;
-import {{{packagename}}}.loaders.{{{serviceName}}}Loaders.*;
-
+import {{{packagename}}}.logic.base.Base{{{serviceName}}}Logic;
 
 /**
  * Servicio que realiza las llamadas a DAO,
@@ -24,13 +16,10 @@ import {{{packagename}}}.loaders.{{{serviceName}}}Loaders.*;
  */
 public class {{{serviceName}}}Logic extends Base{{{serviceName}}}Logic
 {
-    private ThreadPoolExecutor mExecutor;
-/**
+  /**
 	 * Evitamos que se reinicialice mediante un constructor privado
 	 */
-    private {{{serviceName}}}Logic() { 
-      mExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(4);
-    }
+    private {{{serviceName}}}Logic() { }
 
     /**
     * Solo se va a ejecutar la primera vez, y nos va a instanciar el objeto
@@ -47,21 +36,5 @@ public class {{{serviceName}}}Logic extends Base{{{serviceName}}}Logic
     public static {{{serviceName}}}Logic getInstance() {
             return {{{serviceName}}}Holder.instance;
     }
-
-    {{#messages}}
-
-    public static void {{{method}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
-      {{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
-      {{#request.fields}}
-      {{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
-      {{/request.fields}}
-      {{{method}}}({{{request.javaInstanceName}}}, listener, tag);
-    }
-
-    public static void {{{method}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
-      getInstance().mExecutor.execute(new {{{methodUpperCase}}}Loader({{{request.javaInstanceName}}},listener,tag));
-    }
-
-    {{/messages}}
 
 }

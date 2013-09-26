@@ -12,8 +12,6 @@ package {{{packagename}}}.logic.base;
 import {{{packagename}}}.model.dto.*; 
 import {{{packagename}}}.logic.*;
 import {{{packagename}}}.logic.utils.*;
-import {{{packagename}}}.loaders.BetterHttpResponse;
-import {{{packagename}}}.loaders.BetterHttpResponseImpl;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -59,6 +57,8 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,8 +71,39 @@ import org.json.JSONTokener;
  */
 public class Base{{{serviceName}}}Logic
 {
-
+	private final ThreadPoolExecutor mExecutor;
+	/**
+	 * Evitamos que se reinicialice mediante un constructor privado
+	 */
+    protected Base{{{serviceName}}}Logic() { 
+      mExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(4);
+    }
 {{#messages}}
+
+	private static class {{{methodUpperCase}}}Loader extends ConnectionLoader<{{{request.name}}}> {
+		final Base{{{serviceName}}}Logic mLogic;
+		public {{{methodUpperCase}}}Loader(Base{{{serviceName}}}Logic logic, {{{request.name}}} request, NotifiedHttpRequest listener, int tag) {
+			super(request, listener, tag);
+			mLogic = logic;
+		}
+		@Override
+		protected BetterHttpResponse doInBackground({{{request.name}}} request) throws Exception {
+			return mLogic.{{{method}}}(request);
+		}
+	}
+
+    public void async{{{methodUpperCase}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
+      {{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
+      {{#request.fields}}
+      {{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
+      {{/request.fields}}
+      async{{{methodUpperCase}}}({{{request.javaInstanceName}}}, listener, tag);
+    }
+
+    public void async{{{methodUpperCase}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
+      mExecutor.execute(new {{{methodUpperCase}}}Loader(this, {{{request.javaInstanceName}}},listener,tag));
+    }
+
 	/**
 	 * Metodo {{{method}}}: {{{description}}}
 	{{#request.fields}}
@@ -81,7 +112,6 @@ public class Base{{{serviceName}}}Logic
 	 * @returns BetterHttpResponse Respuesta del servidor
 	 * @throws Exception Error de comunicacion / datos 
 	 */
-	 
 	public BetterHttpResponse {{{method}}}({{{javaRequestParams}}}) throws Exception
 	{		
 		{{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
