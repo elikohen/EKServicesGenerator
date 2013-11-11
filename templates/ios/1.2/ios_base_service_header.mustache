@@ -15,6 +15,7 @@
 {{/response.isRawData}}
 {{/imports}}
 #import "ServiceDelegate.h"
+#import "ConnectionDelegate.h"
 
 // Definimos macro para log
 #ifndef _ModelGenLog
@@ -42,7 +43,7 @@
  * @param Parameters: all parameters to form a {{{request.name}}} object
  * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
  */
-- (void) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate;
+- (ConnectionDelegate*) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate;
 
 /**
  * Método async{{{methodUpperCase}}} (delegate): {{{description}}}
@@ -50,7 +51,7 @@
  * @param NSInteger tag: Identificador de la llamada
  * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
  */
-- (void) async{{methodUpperCase}}:({{request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate;
+- (ConnectionDelegate*) async{{methodUpperCase}}:({{request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate;
 
 {{/service.messages}}
 @end

@@ -9,7 +9,6 @@
 
 #import "Base{{{serviceName}}}Logic.h"
 
-#import "BaseConnectionDelegate.h"
 #import "ServiceHelper.h"
 #import "ServiceResponse.h"
 
@@ -33,14 +32,14 @@
  * @param Parameters: all parameters to form a {{{request.name}}} object
  * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
  */
-- (void) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate {
+- (ConnectionDelegate*) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate {
 
 	{{request.name}} *request = [[{{request.name}} alloc] init];
 	{{#request.fields}}
 	request.{{{iosName}}} = {{{iosName}}};
 	{{/request.fields}}
 
-	[self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
+	return [self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
 }
 
 /**
@@ -49,7 +48,7 @@
  * @param NSInteger tag: Identificador de la llamada
  * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
  */
-- (void) async{{methodUpperCase}}:({{request.name}} *)requestDTO withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
+- (ConnectionDelegate*) async{{methodUpperCase}}:({{request.name}} *)requestDTO withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
 	
 	NSString *url=@"{{{url}}}";
 
@@ -139,7 +138,7 @@
 
 	request = [[ServiceHelper sharedInstance] customizeRequest:request];
 
-	BaseConnectionDelegate *connDelegate = [[BaseConnectionDelegate alloc] init];
+	ConnectionDelegate *connDelegate = [[ConnectionDelegate alloc] init];
 	
 	[connDelegate startConnectionWithRequest:request tag:tag delegate:delegate andProcessDataBlock:^id (NSData *data, NSError *__autoreleasing *error) {
 		{{#response.isRawData}}
@@ -172,6 +171,8 @@
 		}
 		{{/response.isRawData}}
 	}];
+
+	return connDelegate;
 }
 
 {{/service.messages}}

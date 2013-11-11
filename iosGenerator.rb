@@ -149,12 +149,12 @@ class IOSGenerator
     File.open(helper_dir+"/ServiceDelegate.h", 'w') { |file| file.write(res) }
 
     if(ios_version && ios_version >= "1.2")
-      puts "\tCreating Helper ... \BaseConnectionDelegate"
+      puts "\tCreating Helper ... \tConnectionDelegate"
       res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_connection_delegate_hader.mustache').read,parameters)
-      File.open(helper_dir+"/Base/BaseConnectionDelegate.h", 'w') { |file| file.write(res) }
+      File.open(helper_dir+"/ConnectionDelegate.h", 'w') { |file| file.write(res) }
 
       res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_connection_delegate_implementation.mustache').read,parameters)
-      File.open(helper_dir+"/Base/BaseConnectionDelegate.m", 'w') { |file| file.write(res) }
+      File.open(helper_dir+"/ConnectionDelegate.m", 'w') { |file| file.write(res) }
     end
   end
 

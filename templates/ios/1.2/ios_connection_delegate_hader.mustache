@@ -1,9 +1,10 @@
 //
-//  BaseConnectionDelegate.h
-//  iostest
+//  ConnectionDelegate.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
 //
-//  Created by Eli Kohen on 11/11/13.
-//  Copyright (c) 2013 Eli Kohen. All rights reserved.
+//  Created by Eli Kohen
+//  Copyright (c) 2013 EKGDev. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,8 +12,9 @@
 
 typedef id (^ProcessDataBlock)(NSData* data, NSError** error);
 
-@interface BaseConnectionDelegate : NSObject
+@interface ConnectionDelegate : NSObject
 
 - (void) startConnectionWithRequest: (NSURLRequest*) request tag: (NSInteger) tag delegate: (id<ServiceDelegate>) delegate andProcessDataBlock: (ProcessDataBlock) dataBlock;
+- (void) cancel;
 
 @end
