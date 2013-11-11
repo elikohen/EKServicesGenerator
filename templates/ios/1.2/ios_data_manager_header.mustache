@@ -1,0 +1,23 @@
+//
+//  CoreDataManager.h
+//  {{{projecyName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CoreDataManager : NSObject
+
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
++ (CoreDataManager *)sharedInstance;
+
+- (void)resetData;
+- (void)saveContext;
+
+@end

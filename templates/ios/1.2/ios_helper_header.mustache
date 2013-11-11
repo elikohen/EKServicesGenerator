@@ -1,0 +1,28 @@
+//
+//  ServiceHelper.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@class ServiceResponse;
+
+@interface ServiceHelper : NSObject
+
+// Get the shared instance and create it if necessary.
++ (ServiceHelper *)sharedInstance;
+- (void) addHeader:(NSString*) header withValue: (NSString*) value;
+- (void) removeHeader:(NSString*) header;
+- (NSString *) preInjectURLParameters:(NSString *)url withObject:(NSObject *)obj;
+- (NSString *) postInjectURLParameters:(NSString *)url withObject:(NSObject *)obj;
+- (NSString *) escapeUrl:(NSString *)url;
+- (NSMutableURLRequest*) customizeRequest:(NSMutableURLRequest*)request;
+- (void) preprocessResponse: (NSURLResponse*) response;
+- (NSData *) preprocessData:(NSData *)responseData;
+- (BOOL) checkCorrectResponse: (ServiceResponse*) response serviceTag:(NSInteger) tag;
+- (BOOL) checkConnection;
+@end

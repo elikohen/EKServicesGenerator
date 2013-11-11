@@ -1,0 +1,38 @@
+//
+//  {{{className}}}.m
+//  {{{projecyName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "{{{className}}}.h"
+#import "{{cdType.name}}.h"
+
+
+@implementation {{{className}}}
+
+{{#cdType.fields}}
+@dynamic {{{iosName}}};
+{{/cdType.fields}}
+
+- (void) updateFromDTO: ({{cdType.name}}*) dto{
+	
+	{{#cdType.fields}}
+	self.{{{iosName}}} = dto.{{{iosName}}};
+	{{/cdType.fields}}
+}
+
+- ({{cdType.name}}*) dtoValue{
+	
+	{{cdType.name}} *dto = [[{{cdType.name}} alloc] init];
+
+	{{#cdType.fields}}
+	dto.{{{iosName}}} = self.{{{iosName}}};
+	{{/cdType.fields}}
+
+	return dto;
+}
+
+@end

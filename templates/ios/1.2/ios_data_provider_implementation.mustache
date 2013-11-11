@@ -1,0 +1,144 @@
+//
+//  {{{className}}}.m
+//  {{{projecyName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "{{{className}}}.h"
+#import "{{cdType.name}}.h"
+#import "{{cdType.iosModelName}}.h"
+
+#import "CoreDataManager.h"
+
+@implementation {{{className}}}
+
+#pragma mark - Public methods
+
++ ({{cdType.iosModelName}}*)update{{cdType.iosModelName}}FromDTO: ({{cdType.name}}*)dto andStoreIt:(BOOL) storeIt{
+	NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
+    
+    NSError *error;
+    {{cdType.iosModelName}}* {{cdType.javaInstanceName}};
+    
+    // Test already stored element (insert or update behavior)
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"{{cdType.iosModelName}}" inManagedObjectContext:context]];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"{{cdType.coreDataIdField}} like %@", dto.{{cdType.coreDataIdField}}]];
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    if(fetchedObjects.count > 0){
+        //Found element, just update it
+        {{cdType.javaInstanceName}} = [fetchedObjects objectAtIndex:0];
+    }
+    else{
+        //Not found, create a new one
+        {{cdType.javaInstanceName}} = [NSEntityDescription insertNewObjectForEntityForName:@"{{cdType.iosModelName}}" inManagedObjectContext:context];
+    }
+	
+	//Copying values
+	[{{cdType.javaInstanceName}} updateFromDTO: dto];
+    
+    if(storeIt && [{{{className}}} saveAndInform]){
+        NSLog(@"Whoops, couldn't save {{cdType.javaInstanceName}}");
+    }
+    
+    return {{cdType.javaInstanceName}};
+}
+
++ (NSArray*)getAllElements{
+	return [self getElementsWithPredicate:nil andSortDescriptors:nil];
+}
+
++ (NSInteger)getAllElementsCount{
+	return [self getElementsCountWithPredicate:nil];
+}
+
++ (void)deleteElement: ({{cdType.iosModelName}}*) element{
+	NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
+	[context deleteObject:element];
+	
+	[self saveAndInform];
+}
+
++ (void)deleteAllElements{
+	[self deleteElementsWithPredicate:nil andSave:YES];
+}
+
+
+#pragma mark - Helper methods
++ (NSInteger)getElementsCountWithPredicate: (NSPredicate*) predicate{
+	NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
+    NSError *error;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"{{cdType.iosModelName}}" inManagedObjectContext:context]];
+	if(predicate){
+		[fetchRequest setPredicate:predicate];
+	}
+	
+	NSInteger result = [context countForFetchRequest:fetchRequest error:&error];
+	if(error){
+		NSLog(@"Whoops, couldn't count {{cdType.iosModelName}}: %@", [error localizedDescription]);
+		return -1;
+	}
+	
+	return result;
+}
+
++ (NSArray*)getElementsWithPredicate: (NSPredicate*) predicate andSortDescriptors: (NSArray*) sortDescriptors{
+	NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
+    NSError *error;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"{{cdType.iosModelName}}" inManagedObjectContext:context]];
+	if(predicate){
+		[fetchRequest setPredicate:predicate];
+	}
+	if(sortDescriptors){
+		[fetchRequest setSortDescriptors:sortDescriptors];
+	}
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+	
+	return fetchedObjects;
+}
+
++ (void)deleteElementsWithPredicate: (NSPredicate*) predicate andSave: (BOOL) save{
+	NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
+    NSError *error;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"{{cdType.iosModelName}}" inManagedObjectContext:context]];
+	if(predicate){
+		[fetchRequest setPredicate:predicate];
+	}
+	[fetchRequest setIncludesPropertyValues:NO];
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+	
+	if(error){
+		NSLog(@"Whoops, couldn't retrieve {{cdType.iosModelName}}s to delete: %@", [error localizedDescription]);
+		return;
+	}
+	
+	for({{cdType.iosModelName}}* element in fetchedObjects){
+		[context deleteObject:element];
+	}
+	
+	if(save && [{{{className}}} saveAndInform]){
+		NSLog(@"Whoops, couldn't save deleted {{cdType.iosModelName}}");
+	}
+}
+
++ (NSError*) saveAndInform{
+	NSError *error;
+	[[[CoreDataManager sharedInstance] managedObjectContext] save:&error];
+	
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotification{{cdType.iosModelName}}UpdatedOnDB object:nil];
+	});
+	
+	return error;
+}
+
+@end

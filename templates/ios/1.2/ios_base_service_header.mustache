@@ -1,0 +1,56 @@
+//
+//  Base{{{serviceName}}}Logic
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+{{#imports}}
+#import "{{request.name}}.h"
+{{^response.isRawData}}
+#import "{{response.name}}.h"
+{{/response.isRawData}}
+{{/imports}}
+#import "ServiceDelegate.h"
+
+// Definimos macro para log
+#ifndef _ModelGenLog
+
+#ifdef SERVICE_DEBUG
+ #define _ModelGenLog(...) NSLog(__VA_ARGS__)
+#else
+ #define _ModelGenLog(...) do { } while (0)
+#endif
+
+#endif // _ModelGenLog
+
+@class ServiceResponse;
+
+@interface Base{{{serviceName}}}Logic : NSObject
+
+{{#service.messages}}
+
+#pragma mark - {{{methodUpperCase}}}
+
+/**
+ * Helper method to fill {{{request.name}}} and call the aync service.
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param Parameters: all parameters to form a {{{request.name}}} object
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate;
+
+/**
+ * Método async{{{methodUpperCase}}} (delegate): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)request withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate;
+
+{{/service.messages}}
+@end

@@ -1,0 +1,18 @@
+//
+//  BaseConnectionDelegate.h
+//  iostest
+//
+//  Created by Eli Kohen on 11/11/13.
+//  Copyright (c) 2013 Eli Kohen. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "ServiceDelegate.h"
+
+typedef id (^ProcessDataBlock)(NSData* data, NSError** error);
+
+@interface BaseConnectionDelegate : NSObject
+
+- (void) startConnectionWithRequest: (NSURLRequest*) request tag: (NSInteger) tag delegate: (id<ServiceDelegate>) delegate andProcessDataBlock: (ProcessDataBlock) dataBlock;
+
+@end

@@ -1,0 +1,91 @@
+//
+//  ServiceHelper.m
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "ServiceHelper.h"
+#import "ServiceResponse.h"
+
+@interface ServiceHelper ()
+
+@property (nonatomic, strong) NSMutableDictionary *mHeaders;
+
+@end
+
+@implementation ServiceHelper
+
+
+// Get the shared instance and create it if necessary.
++ (ServiceHelper *)sharedInstance {
+    
+    static dispatch_once_t onceQueue;
+    static ServiceHelper *instance = nil;
+    
+    dispatch_once(&onceQueue, ^{ instance = [[self alloc] init]; });
+    return instance;
+}
+
+- (id) init{
+  self = [super init];
+  if(self){
+    _mHeaders = [[NSMutableDictionary alloc] init];
+  }
+  return self;
+}
+
+- (void) addHeader:(NSString*) header withValue: (NSString*) value{
+  if(!header || !value) return;
+  
+  [self.mHeaders setObject:value forKey:header];
+}
+
+- (void) removeHeader:(NSString*) header{
+  if(!header) return;
+  
+  [self.mHeaders removeObjectForKey:header];
+}
+
+- (NSString *) preInjectURLParameters:(NSString *)url withObject:(NSObject *)object {
+  return url;
+}
+
+- (NSString *) postInjectURLParameters:(NSString *)url withObject:(NSObject *)object {
+  return url;
+}
+
+- (NSString *) escapeUrl:(NSString *)url {
+  return [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (void) preprocessResponse: (NSURLResponse*) response {
+  //Custom processing (This is a good place to check responseCode)
+}
+
+- (NSData *) preprocessData:(NSData *)responseData {
+  return responseData;
+}
+
+- (NSMutableURLRequest*) customizeRequest:(NSMutableURLRequest*)request {
+  
+  //Adding headers
+  [self.mHeaders enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [request addValue:obj forHTTPHeaderField:key];
+  }];
+  
+  //Setup your custom code here:
+  
+    return request;
+}
+
+- (BOOL) checkCorrectResponse: (ServiceResponse*) response serviceTag:(NSInteger) tag{
+  return YES;
+}
+- (BOOL) checkConnection{
+  return YES;
+}
+
+@end

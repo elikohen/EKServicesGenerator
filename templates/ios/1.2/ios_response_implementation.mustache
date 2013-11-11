@@ -1,0 +1,42 @@
+//
+//  ServiceResponse.m
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "ServiceResponse.h"
+
+@implementation ServiceResponse
+
+
+- (id) initWithData: (id) data andResponse: (NSURLResponse*) response{
+	self = [super init];
+	if(self){
+		self.objectData = data;
+		self.response = response;
+	}
+	return self;
+}
+
+- (NSString*)responseCode{
+	NSString *result = nil;
+	
+	if(self.objectData && [self.objectData respondsToSelector:@selector(responseCode)]){
+		result = [self.objectData performSelector:@selector(responseCode)];
+	}
+	
+	return result;
+}
+
+- (NSInteger) statusCode{
+	NSInteger statusCode = -1;
+	if(self.response && [self.response isKindOfClass: [NSHTTPURLResponse class]]){
+		statusCode = [(NSHTTPURLResponse*)self.response statusCode];
+	}
+	return statusCode;
+}
+
+@end

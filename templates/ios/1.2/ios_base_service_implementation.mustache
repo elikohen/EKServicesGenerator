@@ -1,0 +1,196 @@
+//
+//  {{{serviceName}}}.m
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGev. All rights reserved.
+//
+
+#import "Base{{{serviceName}}}Logic.h"
+
+#import "BaseConnectionDelegate.h"
+#import "ServiceHelper.h"
+{{#imports}}
+#import "{{request.name}}.h"
+{{^response.isRawData}}
+#import "{{response.name}}.h"
+{{/response.isRawData}}
+{{/imports}}
+#import "ServiceResponse.h"
+
+@implementation Base{{{serviceName}}}Logic
+
+- (id) init{
+	self = [super init];
+	if(self){
+		//Custom implementation
+	}
+	return self;
+}
+
+{{#service.messages}}
+#pragma mark - {{{methodUpperCase}}}
+
+/**
+ * Helper method to fill {{{request.name}}} and call the aync service.
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param Parameters: all parameters to form a {{{request.name}}} object
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}WithTag: (NSInteger) tag {{{iosRequestParams}}} andDelegate: (id<ServiceDelegate>) delegate {
+
+	{{request.name}} *request = [[{{request.name}} alloc] init];
+	{{#request.fields}}
+	request.{{{iosName}}} = {{{iosName}}};
+	{{/request.fields}}
+
+	[self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
+}
+
+/**
+ * Método async{{{methodUpperCase}}} (delegate): {{{description}}}
+ * @param {{{request.name}}} request: Petición al servicio
+ * @param NSInteger tag: Identificador de la llamada
+ * @param id<ServiceDelegate> delegate: Delegado al que llamar con la respuesta ({{{response.name}}}) del servidor, o el correspondiente error
+ */
+- (void) async{{methodUpperCase}}:({{request.name}} *)requestDTO withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
+	
+	NSString *url=@"{{{url}}}";
+	
+	url=[[ServiceHelper sharedInstance] preInjectURLParameters:url withObject:requestDTO];
+	{{#fieldsInUrl}}
+	{{#isBoolean}}
+	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true": @"false"];
+    {{/isBoolean}}
+	{{^isBoolean}}
+	NSString *string{{{nameUcase}}}=@"";
+	if(requestDTO.{{{iosName}}}) {
+        string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        if(!string{{{nameUcase}}}) {
+            string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}];
+        }
+	}							 
+	{{/isBoolean}}
+	{{/fieldsInUrl}}
+
+	{{#inURLbutNotField}}
+    #ifdef {{.}}
+	url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{.}}"] withString:{{.}}];
+    #endif
+	{{/inURLbutNotField}}
+
+	{{#fieldsInUrl}}
+    url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{{name}}}"] withString:string{{{nameUcase}}}];
+	{{/fieldsInUrl}}
+	
+	url=[[ServiceHelper sharedInstance] postInjectURLParameters:url  withObject:requestDTO];
+	
+	_ModelGenLog(@"URL: %@", url);
+	
+	{{#isWrite}}	
+	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+	{{#fieldsNotInUrl}}
+	[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] forKey:@"{{{name}}}"];       
+	{{/fieldsNotInUrl}}
+	double time=[[NSDate date] timeIntervalSince1970];
+    [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];
+    {{/isWrite}}
+	
+	NSString *escapedUrl = [[ServiceHelper sharedInstance] escapeUrl:url];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+	
+	{{#isWrite}}
+	NSMutableArray * content = [NSMutableArray array];
+	for(NSString * key in dict) {
+  		[content addObject: [NSString stringWithFormat: @"%@=%@", key, dict[key]]];
+    }
+	NSString * body = [content componentsJoinedByString: @"&"];
+	NSData * bodyData = [body dataUsingEncoding: NSUTF8StringEncoding];
+	[request setHTTPBody:bodyData];
+	[request setValue:@"{{{contentType}}}" forHTTPHeaderField:@"Content-Type"];
+	{{#isPost}}	
+	[request setHTTPMethod:@"POST"];
+    {{/isPost}}
+    {{#isPut}}
+    [request setHTTPMethod:@"PUT"];
+    {{/isPut}}
+    {{#isDelete}}
+    [request setHTTPMethod:@"DELETE"];
+    {{/isDelete}}
+    {{/isWrite}}
+    {{#isWriteJSON}}
+
+    NSDictionary *allFieldsDict=[requestDTO writeToDictionary];
+    //Remove attributes only required for forming the url
+    NSMutableDictionary *jsonDict = [[NSMutableDictionary alloc] initWithDictionary:allFieldsDict];
+    {{#fieldsInUrl}}
+    [jsonDict removeObjectForKey:@"{{{name}}}"];
+    {{/fieldsInUrl}}
+    
+    NSData *requestData = [NSJSONSerialization dataWithJSONObject:jsonDict options:NSJSONWritingPrettyPrinted error:nil];		
+
+	_ModelGenLog(@"%@",[[NSString alloc] initWithData:requestData encoding:NSUTF8StringEncoding]);
+	{{#isPostJSON}}
+	[request setHTTPMethod:@"POST"];
+	{{/isPostJSON}}
+	{{#isPutJSON}}
+	[request setHTTPMethod:@"PUT"];
+	{{/isPutJSON}}
+	{{#isDeleteJSON}}
+	[request setHTTPMethod:@"DELETE"];
+	{{/isDeleteJSON}}
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	[request setValue:@"{{contentType}}" forHTTPHeaderField:@"Content-Type"];
+	[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+	[request setHTTPBody: requestData];
+    
+    {{/isWriteJSON}}
+    {{#isGet}}
+
+	[request setHTTPMethod:@"GET"];
+    {{/isGet}}
+
+	request = [[ServiceHelper sharedInstance] customizeRequest:request];
+
+	BaseConnectionDelegate *connDelegate = [[BaseConnectionDelegate alloc] init];
+	
+	[connDelegate startConnectionWithRequest:request tag:tag delegate:delegate andProcessDataBlock:^id (NSData *data, NSError *__autoreleasing *error) {
+		{{#response.isRawData}}
+    	return data;
+    	{{/response.isRawData}}
+    	{{^response.isRawData}}
+    	id json = nil;
+    	if(data && data.length > 0){
+			NSData *postProcessData =[[ServiceHelper sharedInstance] preprocessData:data];
+	        json = [NSJSONSerialization JSONObjectWithData:postProcessData options:kNilOptions error:error];
+    	} else{
+    		data = nil;
+    	}
+        _ModelGenLog(@"JSON: %@",json);
+        if([json isKindOfClass:[NSArray class]]){
+			NSArray *jsonArray = json;
+			NSMutableArray *arrayData = [[NSMutableArray alloc] initWithCapacity:jsonArray.count];
+			for(NSDictionary *jsonData in jsonArray){
+				{{response.name}} *dtoData = [{{response.name}} readFromDictionary:jsonData];
+				[arrayData addObject:dtoData];
+			}
+			return arrayData;
+		}
+		else if([json isKindOfClass:[NSDictionary class]]){
+			{{response.name}} *dtoData = [{{response.name}} readFromDictionary:json];
+        	return dtoData;
+		}
+		else{
+			return data;
+		}
+		{{/response.isRawData}}
+	}];
+}
+
+{{/service.messages}}
+
+@end
+
+ 

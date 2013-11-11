@@ -1,0 +1,22 @@
+//
+//  ServiceDelegate.h
+//  {{projectName}}
+//  Version: {{version}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+#import "ServiceResponse.h"
+
+@protocol ServiceDelegate <NSObject>
+
+@required
+- (void) onTaskSuccess:(ServiceResponse*) response withTag: (NSInteger) tag;
+- (void) onTaskFailed:(ServiceResponse*) response withTag: (NSInteger) tag;
+- (void) onTaskNoConnection: (NSInteger) tag;
+- (void) onTaskError: (NSError*) error withTag: (NSInteger) tag;
+
+@end

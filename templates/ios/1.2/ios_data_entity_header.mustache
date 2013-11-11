@@ -1,0 +1,25 @@
+//
+//  {{{className}}}.h
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+
+@class {{cdType.name}};
+
+@interface {{{className}}} : NSManagedObject
+
+{{#cdType.fields}}
+/// {{{comment}}}
+@property (nonatomic, retain{{{iosCustomGetter}}}) {{{typeIOS}}} *{{{iosName}}};
+{{/cdType.fields}}
+
+- (void) updateFromDTO: ({{cdType.name}}*) dto;
+- ({{cdType.name}}*) dtoValue;
+
+@end

@@ -1,0 +1,109 @@
+//
+//  {{{className}}}.m
+//  {{{projecyName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "{{{dto.name}}}.h"
+
+@implementation {{{dto.name}}}
+
+-(NSDictionary *) writeToDictionary {
+	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+
+	{{#dto.baseFields}}
+	{{#isBoolean}}
+	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+    {{/isBoolean}}
+	{{^isBoolean}}
+	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
+	{{/isBoolean}}
+	{{/dto.baseFields}}
+	{{#dto.baseArrayFields}}
+    {{#isBoolean}})
+	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
+	{{/isBoolean}}
+    {{^isBoolean}}
+	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
+	{{/isBoolean}}
+	{{/dto.baseArrayFields}}
+	{{#dto.objectFields}}
+	NSDictionary *dict{{{iosName}}}=[self.{{{iosName}}} writeToDictionary];
+	[dict setValue:dict{{{iosName}}} forKey:@"{{{name}}}"];
+	{{/dto.objectFields}}
+	{{#dto.objectArrayFields}}
+	NSMutableArray *array{{{iosName}}}=[[NSMutableArray alloc]init];
+	for({{{iosBaseTypeSingular}}} *typeItem in self.{{{iosName}}}) {
+		NSDictionary *dict{{{iosName}}}=[typeItem writeToDictionary];
+		[array{{{iosName}}} addObject:dict{{{iosName}}}];
+	}
+	[dict setValue:array{{{iosName}}} forKey:@"{{{name}}}"];
+	{{/dto.objectArrayFields}}
+
+	return dict;
+}
+
++({{{dto.name}}} *) readFromDictionary:(NSDictionary *)dict {
+	{{{dto.name}}} *instance=[[{{{dto.name}}} alloc]init];
+
+    {{#dto.objectArrayFields}}
+    instance.{{{iosName}}}=[[NSMutableArray alloc]init];
+    {{/dto.objectArrayFields}}
+    {{#dto.baseFields}}
+    if (![[dict objectForKey:@"{{{name}}}"] isKindOfClass:[NSNull class]]) {
+    	instance.{{{iosName}}}=[dict objectForKey:@"{{{name}}}"];
+    }
+    {{/dto.baseFields}}
+    {{#dto.baseArrayFields}}
+	NSArray *{{{name}}}Array=[dict objectForKey:@"{{{name}}}"];
+	NSMutableArray *{{{name}}}MutableArray=[[NSMutableArray alloc]init];
+	for({{{iosBaseTypeSingular}}} *item in {{{name}}}Array) {
+		[{{{name}}}MutableArray addObject:item];
+	}
+	instance.{{{iosName}}}={{{name}}}MutableArray;
+    {{/dto.baseArrayFields}}
+    {{#dto.objectFields}}
+	if ([dict objectForKey:@"{{{name}}}"]) {
+        instance.{{{iosName}}}=[{{{type}}} readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
+    }
+    {{/dto.objectFields}}
+    {{#dto.objectArrayFields}}
+	NSDictionary *{{{name}}}Item = nil;
+	if(![[dict objectForKey:@"{{{name}}}"] isKindOfClass:[NSNull class]]) {
+		{{{name}}}Item=[dict objectForKey:@"{{{name}}}"];
+	}
+	
+	if([{{{name}}}Item isKindOfClass:[NSArray class]]) {
+		NSArray *{{{name}}}Array=[dict objectForKey:@"{{{name}}}"];
+		NSMutableArray *{{{name}}}MutableArray=[[NSMutableArray alloc]init];
+		for(NSDictionary *data in {{{name}}}Array) {
+			{{{iosBaseTypeSingular}}} *item=[{{{iosBaseTypeSingular}}} readFromDictionary:data];
+			[{{{name}}}MutableArray addObject:item];
+		}
+		instance.{{{iosName}}}={{{name}}}MutableArray;
+	}
+	else if ({{{name}}}Item) {
+		NSMutableArray *{{{name}}}MutableArray=[[NSMutableArray alloc]init];
+		{{{iosBaseTypeSingular}}} *item=[{{{iosBaseTypeSingular}}} readFromDictionary:{{{name}}}Item];
+		[{{{name}}}MutableArray addObject:item];
+		instance.{{{iosName}}}={{{name}}}MutableArray;
+	}
+    {{/dto.objectArrayFields}}
+
+	return instance;
+}
+
+// Establece valores a partir de un NSArray
++(NSArray *) readFromDictionaryArray:(NSArray *)dictArray {
+	NSMutableArray *mutableArray=[[NSMutableArray alloc]init];
+	for(NSDictionary *dict in dictArray) {
+		[mutableArray addObject:[{{{dto.name}}} readFromDictionary:dict]];
+	}
+	return mutableArray;
+}
+
+@end
+ 

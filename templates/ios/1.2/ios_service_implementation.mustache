@@ -1,0 +1,27 @@
+//
+//  Base{{{serviceName}}}.m
+//  {{{projectName}}}
+//  Version: {{{version}}}
+//
+//  Created by Eli Kohen
+//  Copyright (c) 2012 EKGDev. All rights reserved.
+//
+
+#import "{{{serviceName}}}Logic.h"
+
+@implementation {{{serviceName}}}Logic
+
+
+// Get the shared instance and create it if necessary.
++ ({{{serviceName}}}Logic *)sharedInstance {
+    
+    static dispatch_once_t onceQueue;
+    static {{{serviceName}}}Logic *instance = nil;
+    
+    dispatch_once(&onceQueue, ^{ instance = [[self alloc] init]; });
+    return instance;
+}
+
+@end
+
+ 

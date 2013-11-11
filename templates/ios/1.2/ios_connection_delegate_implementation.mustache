@@ -1,0 +1,117 @@
+//
+//  BaseConnectionDelegate.m
+//  iostest
+//
+//  Created by Eli Kohen on 11/11/13.
+//  Copyright (c) 2013 Eli Kohen. All rights reserved.
+//
+
+#import "BaseConnectionDelegate.h"
+#import "ServiceHelper.h"
+
+@interface BaseConnectionDelegate (){
+}
+
+@property (nonatomic, strong) NSMutableData *receivedData;
+@property (nonatomic, strong) NSURLResponse *receivedResponse;
+@property (nonatomic, strong) NSError *error;
+
+@property (nonatomic, weak) id<ServiceDelegate> delegate;
+@property (nonatomic) NSInteger tag;
+@property (copy) ProcessDataBlock processDataBlock;
+
+@end
+
+@implementation BaseConnectionDelegate
+
+
+#pragma mark - Private methods
+
+- (void) startConnectionWithRequest: (NSURLRequest*) request tag: (NSInteger) tag delegate: (id<ServiceDelegate>) delegate andProcessDataBlock: (ProcessDataBlock) dataBlock {
+	self.receivedData = [[NSMutableData alloc] init];
+	self.receivedResponse = nil;
+	self.delegate = delegate;
+	self.processDataBlock = dataBlock;
+	self.tag = tag;
+	
+	if([[ServiceHelper sharedInstance] checkConnection]){
+		NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+		[connection start];
+	}
+	else{
+		[delegate onTaskNoConnection:tag];
+	}
+}
+
+- (void) didFinishLoading{
+	ServiceResponse *result = nil;
+	NSError *error = self.error;
+	if(!error){
+		if(self.receivedData && self.receivedData.length > 0){
+			id processedData = self.processDataBlock(self.receivedData, &error);
+			result = [[ServiceResponse alloc] initWithData:processedData andResponse:self.receivedResponse];
+		} else{
+			result = [[ServiceResponse alloc] initWithData:nil andResponse:self.receivedResponse];
+		}
+	}
+	
+	if (!error && _delegate) {
+		if([[ServiceHelper sharedInstance] checkCorrectResponse:result serviceTag: self.tag]){
+			[_delegate onTaskSuccess:result withTag:self.tag];
+		}
+		else{
+			[_delegate onTaskFailed:result withTag:self.tag];
+		}
+	}
+	else if (error && _delegate) {
+		[_delegate onTaskError:error withTag:self.tag];
+	}
+}
+
+#pragma mark -  NSURLConnectionDelegate
+
+#ifdef NO_SSL_VALIDATION
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
+    
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+    
+    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+#endif
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    
+    self.receivedData = nil;
+    self.receivedResponse = nil;
+    
+    NSLog(@"Connection failed! Error - %@ %@",
+          [error localizedDescription],
+          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+    
+    self.error = error;
+	[self didFinishLoading];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+	
+	self.receivedResponse = response;
+    
+    [self.receivedData setLength:0];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    
+    [self.receivedData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    
+	[self didFinishLoading];
+}
+
+@end
