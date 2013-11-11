@@ -11,12 +11,6 @@
 
 #import "BaseConnectionDelegate.h"
 #import "ServiceHelper.h"
-{{#imports}}
-#import "{{request.name}}.h"
-{{^response.isRawData}}
-#import "{{response.name}}.h"
-{{/response.isRawData}}
-{{/imports}}
 #import "ServiceResponse.h"
 
 @implementation Base{{{serviceName}}}Logic
@@ -58,31 +52,25 @@
 - (void) async{{methodUpperCase}}:({{request.name}} *)requestDTO withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
 	
 	NSString *url=@"{{{url}}}";
+
+	{{#inURLbutNotField}}
+    #ifdef {{.}}
+	url=[url stringByReplacingOccurrencesOfString: {{=<% %>=}}@"${<%={{ }}=%>{{.}}{{=<% %>=}}}<%={{ }}=%>" withString:{{.}}];
+    #endif
+	{{/inURLbutNotField}}
 	
 	url=[[ServiceHelper sharedInstance] preInjectURLParameters:url withObject:requestDTO];
 	{{#fieldsInUrl}}
 	{{#isBoolean}}
 	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true": @"false"];
+	url=[url stringByReplacingOccurrencesOfString: {{=<% %>=}}@"${<%={{ }}=%>{{{name}}}{{=<% %>=}}}<%={{ }}=%>" withString:string{{{nameUcase}}}];
     {{/isBoolean}}
 	{{^isBoolean}}
-	NSString *string{{{nameUcase}}}=@"";
 	if(requestDTO.{{{iosName}}}) {
-        string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        if(!string{{{nameUcase}}}) {
-            string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}];
-        }
+        NSString* string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        url=[url stringByReplacingOccurrencesOfString: {{=<% %>=}}@"${<%={{ }}=%>{{{name}}}{{=<% %>=}}}<%={{ }}=%>" withString:string{{{nameUcase}}}];
 	}							 
 	{{/isBoolean}}
-	{{/fieldsInUrl}}
-
-	{{#inURLbutNotField}}
-    #ifdef {{.}}
-	url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{.}}"] withString:{{.}}];
-    #endif
-	{{/inURLbutNotField}}
-
-	{{#fieldsInUrl}}
-    url=[url stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"${%@}",@"{{{name}}}"] withString:string{{{nameUcase}}}];
 	{{/fieldsInUrl}}
 	
 	url=[[ServiceHelper sharedInstance] postInjectURLParameters:url  withObject:requestDTO];
@@ -100,7 +88,6 @@
 	
 	NSString *escapedUrl = [[ServiceHelper sharedInstance] escapeUrl:url];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
-	
 	{{#isWrite}}
 	NSMutableArray * content = [NSMutableArray array];
 	for(NSString * key in dict) {
@@ -145,10 +132,8 @@
 	[request setValue:@"{{contentType}}" forHTTPHeaderField:@"Content-Type"];
 	[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
 	[request setHTTPBody: requestData];
-    
     {{/isWriteJSON}}
     {{#isGet}}
-
 	[request setHTTPMethod:@"GET"];
     {{/isGet}}
 
