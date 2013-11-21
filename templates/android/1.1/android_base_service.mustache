@@ -58,6 +58,7 @@ import org.apache.http.protocol.HttpContext;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.json.JSONArray;
@@ -92,16 +93,16 @@ public class Base{{{serviceName}}}Logic
 		}
 	}
 
-    public void async{{{methodUpperCase}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
+    public Future<?> async{{{methodUpperCase}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
       {{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
       {{#request.fields}}
       {{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
       {{/request.fields}}
-      async{{{methodUpperCase}}}({{{request.javaInstanceName}}}, listener, tag);
+      return async{{{methodUpperCase}}}({{{request.javaInstanceName}}}, listener, tag);
     }
 
-    public void async{{{methodUpperCase}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
-      mExecutor.execute(new {{{methodUpperCase}}}Loader(this, {{{request.javaInstanceName}}},listener,tag));
+    public Future<?> async{{{methodUpperCase}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
+      return mExecutor.submit(new {{{methodUpperCase}}}Loader(this, {{{request.javaInstanceName}}},listener,tag));
     }
 
 	/**
