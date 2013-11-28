@@ -1,0 +1,15 @@
+package {{{packagename}}}.logic;
+
+public interface HttpOperation {
+	
+	/**
+	 * Cancels and interrupts if running
+	 */
+	public void cancel();
+	
+	/**
+	 * Cancels interrupting depending on the parameter.
+	 * @param interruptIfRunning
+	 */
+	public void cancel(boolean interruptIfRunning);
+}

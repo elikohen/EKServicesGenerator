@@ -1,0 +1,25 @@
+package {{{packagename}}}.logic.base;
+
+import java.util.concurrent.Future;
+
+import {{{packagename}}}.logic.HttpOperation;
+
+public class BaseHttpOperation implements HttpOperation {
+	
+	final Future<?> mFuture;
+	
+	public BaseHttpOperation(Future<?> future){
+		mFuture = future;
+	}
+
+	@Override
+	public void cancel() {
+		mFuture.cancel(true);
+	}
+
+	@Override
+	public void cancel(boolean interruptIfRunning) {
+		mFuture.cancel(interruptIfRunning);
+	}
+	
+}

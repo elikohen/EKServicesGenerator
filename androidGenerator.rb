@@ -63,6 +63,17 @@ class AndroidGenerator
     logicBaseDir=baseDir+"/logic/base"
     logicDir=baseDir+"/logic"
     FileUtils.mkdir_p(logicBaseDir)
+
+    puts "\tCreating HttpOperation"
+    helperFile=logicDir+"/HttpOperation.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/HttpOperation.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating BaseHttpOperation"
+    helperFile=logicBaseDir+"/BaseHttpOperation.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/BaseHttpOperation.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
     protocol.services.keys.each do |serviceKey|
       puts "\tCreating Service ... \t#{serviceKey}"
       logicBaseFile=logicBaseDir+"/Base"+serviceKey+"Logic.java"

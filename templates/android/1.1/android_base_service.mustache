@@ -93,16 +93,17 @@ public class Base{{{serviceName}}}Logic
 		}
 	}
 
-    public Future<?> async{{{methodUpperCase}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
-      {{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
-      {{#request.fields}}
-      {{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
-      {{/request.fields}}
-      return async{{{methodUpperCase}}}({{{request.javaInstanceName}}}, listener, tag);
+    public HttpOperation async{{{methodUpperCase}}}({{^emptyParams?}}{{{javaRequestParams}}},{{/emptyParams?}} NotifiedHttpRequest listener, int tag){
+      	{{{request.name}}} {{{request.javaInstanceName}}}=new {{{request.name}}}();
+      	{{#request.fields}}
+      	{{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});  
+      	{{/request.fields}}
+      	return async{{{methodUpperCase}}}({{{request.javaInstanceName}}}, listener, tag);
     }
 
-    public Future<?> async{{{methodUpperCase}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
-      return mExecutor.submit(new {{{methodUpperCase}}}Loader(this, {{{request.javaInstanceName}}},listener,tag));
+    public HttpOperation async{{{methodUpperCase}}}({{{request.name}}} {{{request.javaInstanceName}}}, NotifiedHttpRequest listener, int tag){
+    	Future<?> future = mExecutor.submit(new {{{methodUpperCase}}}Loader(this, {{{request.javaInstanceName}}},listener,tag));
+      	return new BaseHttpOperation(future);
     }
 
 	/**
