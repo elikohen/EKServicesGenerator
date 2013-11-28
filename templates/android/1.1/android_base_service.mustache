@@ -140,7 +140,7 @@ public class Base{{{serviceName}}}Logic
 		{{/onSend}}
 		// Obtenemos la URL del mensaje : {{{url}}}
 		String url="{{{url}}}";
-		url={{{projectName}}}Helper.getInstance().preInjectURLParameters(url,{{{request.javaInstanceName}}});
+		url=LogicHelper.getInstance().preInjectURLParameters(url,{{{request.javaInstanceName}}});
 		{{#fieldsInUrl}}
 		if({{{request.javaInstanceName}}}.get{{{nameUcase}}}()==null)
 		{
@@ -155,7 +155,7 @@ public class Base{{{serviceName}}}Logic
 		url=fixSystemProperties(url);
 
 		url=url.replace("|",URLEncoder.encode("|","UTF-8"));
-		url={{{projectName}}}Helper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
+		url=LogicHelper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT:"+url);
 		{{#request.multipart}}
 		DefaultHttpClient httpClient = HttpClientHelper.getInstance().getHttpClient();
@@ -173,9 +173,9 @@ public class Base{{{serviceName}}}Logic
 		{{/fieldsNotInUrl}}
 			
 		postRequest.setEntity(reqEntity);
-		{{{projectName}}}Helper.getInstance().preExecute(httpClient,postRequest,cookieStore,localContext);
+		LogicHelper.getInstance().preExecute(httpClient,postRequest,cookieStore,localContext);
 		HttpResponse response = httpClient.execute(postRequest,localContext);
-		{{{projectName}}}Helper.getInstance().postExecute(httpClient,postRequest,response,cookieStore);
+		LogicHelper.getInstance().postExecute(httpClient,postRequest,response,cookieStore);
 		BufferedReader reader = new BufferedReader(
 			new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 		String sResponse;
@@ -214,14 +214,14 @@ public class Base{{{serviceName}}}Logic
 		request.addHeader("data",jsonObject.toString());	
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT (application/json):"+jsonObject.toString());			
 		{{/isGet}}
-		{{{projectName}}}Helper.getInstance().addHeaders(request);
-        {{{projectName}}}Helper.getInstance().preExecute(client,request,cookieStore,localContext);
+		LogicHelper.getInstance().addHeaders(request);
+        LogicHelper.getInstance().preExecute(client,request,cookieStore,localContext);
 		HttpResponse response = client.execute(request,localContext);
-		{{{projectName}}}Helper.getInstance().postExecute(client,request,response,cookieStore);
+		LogicHelper.getInstance().postExecute(client,request,response,cookieStore);
 		HttpEntity entity = response.getEntity();
 		{{^response.isRawData}}
 		String result=convertStreamToString(entity.getContent());
-		result={{{projectName}}}Helper.getInstance().preprocessResponse(result);
+		result=LogicHelper.getInstance().preprocessResponse(result);
 		
 		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" RECEIVED:"+result);
 		{{/response.isRawData}}

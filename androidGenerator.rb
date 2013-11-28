@@ -146,7 +146,7 @@ class AndroidGenerator
     puts 'HELPERS'
     puts '--------------'
     puts "\tCreating Helper ... \t#{projectName}Helper"
-    helperFile=baseDir+"/logic/"+projectName+"Helper.java"
+    helperFile=baseDir+"/logic/LogicHelper.java"
     res=Mustache.render(File.open("templates/android/"+aVersion+"/android_helper.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
   end

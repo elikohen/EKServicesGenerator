@@ -18,14 +18,14 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 
-public class {{{projectName}}}Helper
+public class LogicHelper
 {
-	private static {{{projectName}}}Helper instance=new {{{projectName}}}Helper();
+	private static LogicHelper instance=new LogicHelper();
 	private Map<String,String> headers = new HashMap<String,String>();
 	
-	private {{{projectName}}}Helper() {
+	private LogicHelper() {
 	} 
-	public static {{{projectName}}}Helper getInstance() {
+	public static LogicHelper getInstance() {
 		return instance;
 	}
 	public final void addHeader(String header, String value){
