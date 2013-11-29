@@ -154,7 +154,7 @@ public class Base{{{serviceName}}}Logic
 		}	
 		{{/fieldsInUrl}}
 		
-		url=fixSystemProperties(url);
+		url=LogicUtils.fixSystemProperties(url);
 
 		url=url.replace("|",URLEncoder.encode("|","UTF-8"));
 		url=LogicHelper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
@@ -223,13 +223,13 @@ public class Base{{{serviceName}}}Logic
 		LogicHelper.getInstance().postExecute(client,request,response,cookieStore);
 		HttpEntity entity = response.getEntity();
 		{{^response.isRawData}}
-		String result=convertStreamToString(entity.getContent());
+		String result=LogicUtils.convertStreamToString(entity.getContent());
 		result=LogicHelper.getInstance().preprocessResponse(result);
 		
 		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","RECEIVED:"+result);
 		{{/response.isRawData}}
 		{{#response.isRawData}}
-		RawData result=new RawData(convertStreamToBytes(entity.getContent()));
+		RawData result=new RawData(LogicUtils.convertStreamToBytes(entity.getContent()));
 		{{/response.isRawData}}
 		{{/request.multipart}}
 		{{#response.isRawData}}
@@ -263,61 +263,4 @@ public class Base{{{serviceName}}}Logic
 		return responseImpl;
 	}
 {{/messages}}	
-	
-	/**
-	 * Lee el contenido de un stream como una cadena
-	 * @param is InputStream del que leer
-	 * @return Cadena leida
-	 * @throws IOException
-	 */
-	private String convertStreamToString(InputStream is) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-
-		String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-		return sb.toString();
-	}
-
-		/**
-	 * Lee el contenido de un stream como bytes
-	 * @param is InputStream del que leer
-	 * @return Bytes leidos
-	 * @throws IOException
-	 */
-	private byte[] convertStreamToBytes(InputStream is) throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		int nRead;
-		byte[] data = new byte[16384];
-
-		while ((nRead = is.read(data, 0, data.length)) != -1) {
-		  buffer.write(data, 0, nRead);
-		}
-
-		buffer.flush();
-
-		return buffer.toByteArray();
-	}
-	
-	/**
-	 * A�ade las propiedades de sistema en los par�metros que aun no tienen valor establecido
-	 * @param URL original
-	 * @returns URL modificada anyadiendo las propiedades de sistema
-	 */
-	private  String fixSystemProperties(String url)
-	{
-		while(url.contains("${"))
-		{
-			int start=url.indexOf("${")+2;
-			int end=url.indexOf("}",start);
-			String key=url.substring(start,end);
-			String value=System.getProperty(key,"");
-			url=url.replace("${"+key+"}",value);
-		}
-		return url;
-	}
-	
 }

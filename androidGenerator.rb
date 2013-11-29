@@ -153,6 +153,11 @@ class AndroidGenerator
     res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
     File.open(helperFile, 'w') { |file| file.write(res) }
 
+    puts "\tCreating LoaderUtil ... \tLogicUtils"
+    helperFile=baseDir+"/logic/utils/LogicUtils.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/LogicUtils.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
     ############ Helper if needed
     puts 'HELPERS'
     puts '--------------'
