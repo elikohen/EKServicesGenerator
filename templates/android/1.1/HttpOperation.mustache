@@ -12,4 +12,9 @@ public interface HttpOperation {
 	 * @param interruptIfRunning
 	 */
 	public void cancel(boolean interruptIfRunning);
+
+	/**
+	* Returns whether this operation is already cancelled.
+	*/
+	public boolean isCancelled();
 }

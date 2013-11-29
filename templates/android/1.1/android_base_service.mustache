@@ -8,6 +8,7 @@ Created by Service-Generator.
 */
 package {{{packagename}}}.logic.base;
 
+import android.util.Log;
 
 import {{{packagename}}}.model.dto.*; 
 import {{{packagename}}}.logic.*;
@@ -76,7 +77,7 @@ public class Base{{{serviceName}}}Logic
 	/**
 	 * Evitamos que se reinicialice mediante un constructor privado
 	 */
-    protected Base{{{serviceName}}}Logic() { 
+    public Base{{{serviceName}}}Logic() { 
       mExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(4);
     }
 {{#messages}}
@@ -157,7 +158,7 @@ public class Base{{{serviceName}}}Logic
 
 		url=url.replace("|",URLEncoder.encode("|","UTF-8"));
 		url=LogicHelper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
-		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT:"+url);
+		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","SENT:"+url);
 		{{#request.multipart}}
 		DefaultHttpClient httpClient = HttpClientHelper.getInstance().getHttpClient();
 		HttpPost postRequest = new HttpPost(url);			
@@ -205,7 +206,7 @@ public class Base{{{serviceName}}}Logic
 		{{^isDeleteJSON}}
 		JSONObject jsonObject = {{{request.javaInstanceName}}}.serialize();
 		StringEntity requestEntity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
-		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT (application/json):"+jsonObject.toString());
+		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","SENT (application/json):"+jsonObject.toString());
 		requestEntity.setContentType("{{contentType}}");
 		request.setEntity(requestEntity);
 		{{/isDeleteJSON}}
@@ -213,7 +214,8 @@ public class Base{{{serviceName}}}Logic
 		{{#isGet}}
 		JSONObject jsonObject = {{{request.javaInstanceName}}}.serialize();
 		request.addHeader("data",jsonObject.toString());	
-		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" SENT (application/json):"+jsonObject.toString());			
+		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","SENT (application/json):"+jsonObject.toString());
+
 		{{/isGet}}
 		LogicHelper.getInstance().addHeaders(request);
         LogicHelper.getInstance().preExecute(client,request,cookieStore,localContext);
@@ -224,7 +226,7 @@ public class Base{{{serviceName}}}Logic
 		String result=convertStreamToString(entity.getContent());
 		result=LogicHelper.getInstance().preprocessResponse(result);
 		
-		System.out.println(Base{{{serviceName}}}Logic.class.getName()+" RECEIVED:"+result);
+		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","RECEIVED:"+result);
 		{{/response.isRawData}}
 		{{#response.isRawData}}
 		RawData result=new RawData(convertStreamToBytes(entity.getContent()));
