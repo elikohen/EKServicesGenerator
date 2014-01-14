@@ -66,7 +66,7 @@
     {{/isBoolean}}
 	{{^isBoolean}}
 	if(requestDTO.{{{iosName}}}) {
-        NSString* string{{{nameUcase}}}=[[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString* string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}];
         url=[url stringByReplacingOccurrencesOfString: {{=<% %>=}}@"${<%={{ }}=%>{{{name}}}{{=<% %>=}}}<%={{ }}=%>" withString:string{{{nameUcase}}}];
 	}							 
 	{{/isBoolean}}

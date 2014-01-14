@@ -55,9 +55,9 @@ class IOSGenerator
       File.open(datamodel_dir+"/contents", 'w') { |file| file.write(res) }
       puts "\tCreating CoreDataManager ..."
       res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_manager_header.mustache').read,parameters)
-      File.open(data_dir+"/CoreDataManager.h", 'w') { |file| file.write(res) }
+      File.open(data_dir+"/CoreDataManager.h", 'w') { |file| file.write(res) } unless File.exists?(data_dir+"/CoreDataManager.h")
       res=Mustache.render(File.open('templates/ios/'+ios_version+'/ios_data_manager_implementation.mustache').read,parameters)
-      File.open(data_dir+"/CoreDataManager.m", 'w') { |file| file.write(res) }
+      File.open(data_dir+"/CoreDataManager.m", 'w') { |file| file.write(res) } unless File.exists?(data_dir+"/CoreDataManager.m")
       coreDataTypes.each do |cdType|
         puts "\tCreating CoreDataObject ... \t#{cdType.iosModelName}"
         data_header_file=data_dir+'/'+cdType.iosModelName+'.h'
