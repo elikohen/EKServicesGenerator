@@ -1,4 +1,4 @@
-#asdasdasdas
+
 # ServiceGenerator
 ## Plantilla de definición de servicios
 
@@ -7,7 +7,7 @@ Los servicios de una aplicación se definen en un fichero con formato XML
 El fichero de definición define los tipos y servicios asociados a la
 aplicación siguiendo el siguiente formato:
 
-	<protocol [OPCIONES_PROTOCOL]>
+	<protocol>
 			<messages>
 				<!-- ############################# -->
 				<!-- LISTADO DE MENSAJES DE LA APP -->
@@ -42,24 +42,6 @@ aplicación siguiendo el siguiente formato:
 Atributos de las etiquetas del fichero de definición de servicios:
 
 
-### TAG: protocol
-
-#### ATRIBUTOS:
-		
-##### javaServiceException [Opcional]  
-Clase java (generación Android, Server) que encapsula la excepción de servicio
-
-##### javaServiceExceptionListener [Opcional] 
-Interfaz java (generación Android, Server) que es llamada con la excepción
-##### onSend [Opcional] 
-Callback java notificado en caso de envío de mensaje 
-##### onReceive [Opcional] 
-Callback java notificado en caso de recepción de mensaje 
-
-##### onError [Opcional] 
-Callback java notificado en caso de error
-
-
 ### TAG: message
 
 #### ATRIBUTOS:
@@ -68,11 +50,15 @@ Nombre único del servicio
 ##### service: 
 Grupo de servicios al que pertenece (varios mensajes con mismo service generarán la lógica en el mismo fichero)
 ##### method: 
-Nombre del método para acceder al servicio
+Nombre del método para acceder al servicio, recomendable utilizar un valor identico a 'name'
 ##### description [Opcional]: 
 Descripción del mensaje, comentario en documentación
 ##### type: 
-Tipo del mensaje valores: Put, Get, Post, Delete
+Tipo del mensaje valores: Get, Put, PutJSON, Post, PostJSON o Delete  
+*PutJSON y PostJSON mandarán los datos en formato json y setearan el Content-Type a application/json*
+##### content_type [Opcional]: 
+Override del header Content-Type seteado automáticamente en función del type (Get, Post, PostJson.. etc). Por ejemplo, si se quiere mandar un Post con "application/json" pero que en realidad se envie en modo form, habría que poner el **type='Post'** y **content_type='application/json'**
+
 
 
 ### TAG: url
@@ -92,9 +78,14 @@ Nombre del DTO en el código generado
                 
 ### TAG: response
 
+*En el caso del response, no hace falta rellenar los fields si se utiliza un name ya definido mas abajo en los types (objetos del modelo). Además Tampoco hace falta indicar si se trata de un Array de los responseDTO o un responseDTO simple, ya que el propio código generado hará la detección*
+
+
 #### ATRIBUTOS:
-##### name:
+##### name [opcional si type = raw]:
 Nombre del DTO en el código generado
+##### type [opcional]: 
+Únicamente utilizado para la recepción de datos sin formato. En tal caso hay que utilizar **type='raw'** y NO  setear el atributo 'name'
 
 ### TAG: field
 
@@ -131,4 +122,4 @@ comando terminal...
 
 Comando terminal...
 
-*ruby generator.rb -f [Ruta absoluta fichero xml] -pn [Nombre de proyecto] -package [Paquete Java Base] -aOutput [Ruta al proyecto Android] -iOutput [Ruta al proyecto iOS]*
+*ruby generator.rb -f [Ruta absoluta fichero xml] -pn [Nombre de proyecto] -package [Paquete Java Base] -aVersion [Versión de templates para android] -aOutput [Ruta al proyecto Android] -iVersion [Versión de templates para iOS] -iOutput [Ruta al proyecto iOS]*

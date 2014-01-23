@@ -87,7 +87,6 @@ class AndroidGenerator
       res=Mustache.render(File.open("templates/android/"+aVersion+"/android_service.mustache").read,parameters)
       File.open(logicFile, 'w') { |file| file.write(res) }      unless File.exists?(logicFile)
     end
-    ########## Tasks
 
     ######### Utils
     puts 'UTILS'

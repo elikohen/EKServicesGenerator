@@ -52,6 +52,7 @@ puts 'iOS output:'.cyan << ios_output if ios_output
 puts 'iOS version:'.cyan << ios_version if ios_output
 
 puts '-------------------'
+# Reading xml data and creating protocol model that contains all info
 protocol=XmlReader::read_xml file
 # ANDROID Generation
 AndroidGenerator.new.generate(protocol,project_name,package_name,android_version,android_output,mode) if android_output

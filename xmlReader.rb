@@ -59,7 +59,7 @@ class XmlReader
       # Read Response Type
       protocol.messages[i].response=XmlReader.read_type(xmlMessage.elements['response'])
 
-      # Add types to global types
+      # Add types to global types without overriding same type previously inserted
       XmlReader.add_type_to_array(protocol.messages[i].request, protocol.types)
       XmlReader.add_type_to_array(protocol.messages[i].response, protocol.types)
 
