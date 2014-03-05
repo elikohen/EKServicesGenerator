@@ -75,20 +75,24 @@
 	url=[[ServiceHelper sharedInstance] postInjectURLParameters:url  withObject:requestDTO];
 	
 	_ModelGenLog(@"URL: %@", url);
-	
-	{{#isWrite}}	
-	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-	{{#fieldsNotInUrl}}
-	[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] forKey:@"{{{name}}}"];       
-	{{/fieldsNotInUrl}}
-	double time=[[NSDate date] timeIntervalSince1970];
-    [dict setValue:[NSNumber numberWithDouble:time] forKey:@"requestTime"];
-    {{/isWrite}}
-	
+
 	NSString *escapedUrl = [[ServiceHelper sharedInstance] escapeUrl:url];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+    
 	{{#isWrite}}
-	NSMutableArray * content = [NSMutableArray array];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+
+	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+	{{#fieldsNotInUrlBool}}
+	if(requestDTO.{{{iosName}}}){
+		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true" : @"false"] forKey:@"{{{name}}}"];
+	}
+	{{/fieldsNotInUrlBool}}
+	{{#fieldsNotInUrlNoBool}}
+	if(requestDTO.{{{iosName}}}){
+		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] forKey:@"{{{name}}}"];       
+	}
+	{{/fieldsNotInUrlNoBool}}
+    NSMutableArray * content = [NSMutableArray array];
 	for(NSString * key in dict) {
   		[content addObject: [NSString stringWithFormat: @"%@=%@", key, dict[key]]];
     }
@@ -107,16 +111,15 @@
     {{/isDelete}}
     {{/isWrite}}
     {{#isWriteJSON}}
-
     NSDictionary *allFieldsDict=[requestDTO writeToDictionary];
     //Remove attributes only required for forming the url
     NSMutableDictionary *jsonDict = [[NSMutableDictionary alloc] initWithDictionary:allFieldsDict];
     {{#fieldsInUrl}}
     [jsonDict removeObjectForKey:@"{{{name}}}"];
     {{/fieldsInUrl}}
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
     
     NSData *requestData = [NSJSONSerialization dataWithJSONObject:jsonDict options:NSJSONWritingPrettyPrinted error:nil];		
-
 	_ModelGenLog(@"%@",[[NSString alloc] initWithData:requestData encoding:NSUTF8StringEncoding]);
 	{{#isPostJSON}}
 	[request setHTTPMethod:@"POST"];
@@ -133,6 +136,25 @@
 	[request setHTTPBody: requestData];
     {{/isWriteJSON}}
     {{#isGet}}
+	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+	{{#fieldsNotInUrlBool}}
+	if(requestDTO.{{{iosName}}}){
+		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true" : @"false"] forKey:@"{{{name}}}"];
+	}
+	{{/fieldsNotInUrlBool}}
+	{{#fieldsNotInUrlNoBool}}
+	if(requestDTO.{{{iosName}}}){
+		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] forKey:@"{{{name}}}"];       
+	}
+	{{/fieldsNotInUrlNoBool}}
+    NSMutableArray * content = [NSMutableArray array];
+	for(NSString * key in dict) {
+  		[content addObject: [NSString stringWithFormat: @"%@=%@", key, dict[key]]];
+    }
+	NSString * urlParams = [NSString stringWithFormat:@"?%@",[content componentsJoinedByString: @"&"]];
+	escapedUrl = [escapedUrl stringByAppendingString:[urlParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+	NSLog(@"%@", escapedUrl);
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
 	[request setHTTPMethod:@"GET"];
     {{/isGet}}
 

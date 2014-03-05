@@ -15,20 +15,10 @@
 	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 
 	{{#dto.baseFields}}
-	{{#isBoolean}}
-	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
-    {{/isBoolean}}
-	{{^isBoolean}}
 	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
-	{{/isBoolean}}
 	{{/dto.baseFields}}
 	{{#dto.baseArrayFields}}
-    {{#isBoolean}})
-	[dict setValue:self.{{{iosName}}}.boolValue ? @"true": @"false" forKey:@"{{{name}}}"];
-	{{/isBoolean}}
-    {{^isBoolean}}
 	[dict setValue:self.{{{iosName}}} forKey:@"{{{name}}}"];
-	{{/isBoolean}}
 	{{/dto.baseArrayFields}}
 	{{#dto.objectFields}}
 	NSDictionary *dict{{{iosName}}}=[self.{{{iosName}}} writeToDictionary];

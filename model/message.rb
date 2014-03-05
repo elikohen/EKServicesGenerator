@@ -59,6 +59,26 @@ class Message
     return fields
   end
 
+  def fieldsNotInUrlBool
+    fields=Array.new
+    request.fields.each do |field|
+      if !(url.include?("${#{field.name}}")) && field.isBoolean
+        fields << field
+      end
+    end
+    return fields
+  end
+
+  def fieldsNotInUrlNoBool
+    fields=Array.new
+    request.fields.each do |field|
+      if !(url.include?("${#{field.name}}")) && !field.isBoolean
+        fields << field
+      end
+    end
+    return fields
+  end
+
   def contentType
     if @contentType
       return @contentType
