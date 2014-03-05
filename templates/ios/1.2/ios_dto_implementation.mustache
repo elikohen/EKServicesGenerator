@@ -66,7 +66,7 @@
 	instance.{{{iosName}}}={{{name}}}MutableArray;
     {{/dto.baseArrayFields}}
     {{#dto.objectFields}}
-	if ([dict objectForKey:@"{{{name}}}"]) {
+	if (![[dict objectForKey:@"{{{name}}}"] isKindOfClass:[NSNull class]]) {
         instance.{{{iosName}}}=[{{{type}}} readFromDictionary:[dict objectForKey:@"{{{name}}}"]];
     }
     {{/dto.objectFields}}
