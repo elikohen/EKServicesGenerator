@@ -32,7 +32,11 @@ class Field
     return name.upcase
   end
   def javaName
-    return name.camelize()[0..1].downcase<<name.camelize()[2..-1]
+    if name.length > 1
+      return name.camelize()[0..1].downcase<<name.camelize()[2..-1]
+    else
+      return name.downcase
+    end
   end
   def iosName
     iosname = name
@@ -47,13 +51,18 @@ class Field
     elsif(iosname == 'id')
       return 'objectId'
     end
-    return iosname.camelize()[0..1].downcase<<name.camelize()[2..-1]
+
+    if iosname.length > 1
+      return iosname.camelize()[0..1].downcase<<name.camelize()[2..-1]
+    else
+      iosname.downcase
+    end
   end
   def iosCustomGetter
     javaname = self.javaName
 
     ## properties that generate getters starting by new are not allowed so change getter by getNew...
-    if(javaName.start_with?('new'))
+    if(javaname.start_with?('new'))
       getter = 'get'+javaname[0].upcase+javaname[1..-1]
       return ", getter=#{getter}"
     end
