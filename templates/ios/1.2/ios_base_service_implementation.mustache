@@ -59,6 +59,8 @@
 	{{/inURLbutNotField}}
 	
 	url=[[ServiceHelper sharedInstance] preInjectURLParameters:url withObject:requestDTO];
+
+	// Insertamos los parametros de la url contenidos en el objeto request : {{{url}}}
 	{{#fieldsInUrl}}
 	{{#isBoolean}}
 	NSString *string{{{nameUcase}}}=[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true": @"false"];
@@ -77,7 +79,6 @@
 	_ModelGenLog(@"URL: %@", url);
 
 	NSString *escapedUrl = [[ServiceHelper sharedInstance] escapeUrl:url];
-    
 	{{#isWrite}}
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
 
@@ -136,24 +137,24 @@
 	[request setHTTPBody: requestData];
     {{/isWriteJSON}}
     {{#isGet}}
-	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+    {{#hasFieldsNotInUrl}}
+    //Se incluyen el resto de atributos no contenidos en la url como parametros get
+	NSMutableArray * content = [NSMutableArray array];
 	{{#fieldsNotInUrlBool}}
 	if(requestDTO.{{{iosName}}}){
-		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}.boolValue ? @"true" : @"false"] forKey:@"{{{name}}}"];
+		[content addObject:[NSString stringWithFormat:@"%@=%@",@"{{{name}}}",requestDTO.{{{iosName}}}.boolValue ? @"true" : @"false"]];
 	}
 	{{/fieldsNotInUrlBool}}
 	{{#fieldsNotInUrlNoBool}}
 	if(requestDTO.{{{iosName}}}){
-		[dict setValue:[NSString stringWithFormat:@"%@",requestDTO.{{{iosName}}}] forKey:@"{{{name}}}"];       
+		[content addObject:[NSString stringWithFormat:@"%@=%@",@"{{{name}}}",requestDTO.{{{iosName}}}]];       
 	}
 	{{/fieldsNotInUrlNoBool}}
-    NSMutableArray * content = [NSMutableArray array];
-	for(NSString * key in dict) {
-  		[content addObject: [NSString stringWithFormat: @"%@=%@", key, dict[key]]];
-    }
 	NSString * urlParams = [NSString stringWithFormat:@"?%@",[content componentsJoinedByString: @"&"]];
 	escapedUrl = [escapedUrl stringByAppendingString:[urlParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	NSLog(@"%@", escapedUrl);
+	{{/hasFieldsNotInUrl}}
+	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
 	[request setHTTPMethod:@"GET"];
     {{/isGet}}
@@ -161,7 +162,6 @@
 	request = [[ServiceHelper sharedInstance] customizeRequest:request];
 
 	ConnectionDelegate *connDelegate = [[ConnectionDelegate alloc] init];
-	
 	[connDelegate startConnectionWithRequest:request tag:tag delegate:delegate andProcessDataBlock:^id (NSData *data, NSError *__autoreleasing *error) {
 		{{#response.isRawData}}
     	return data;
