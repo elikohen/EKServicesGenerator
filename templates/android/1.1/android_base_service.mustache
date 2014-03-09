@@ -8,6 +8,7 @@ Created by Service-Generator.
 */
 package {{{packagename}}}.logic.base;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import {{{packagename}}}.model.dto.*; 
@@ -140,7 +141,7 @@ public class Base{{{serviceName}}}Logic
 		{{#onSend}}
 			{{{onSend}}}({{{request.javaInstanceName}}});
 		{{/onSend}}
-		// Obtenemos la URL del mensaje : {{{url}}}
+		// Insertamos los parametros de la url contenidos en el objeto request : {{{url}}}
 		String url="{{{url}}}";
 		url=LogicHelper.getInstance().preInjectURLParameters(url,{{{request.javaInstanceName}}});
 		{{#fieldsInUrl}}
@@ -155,8 +156,23 @@ public class Base{{{serviceName}}}Logic
 		{{/fieldsInUrl}}
 		
 		url=LogicUtils.fixSystemProperties(url);
-
 		url=url.replace("|",URLEncoder.encode("|","UTF-8"));
+
+		{{#isGet}}
+		{{#hasFieldsNotInUrl}}
+		//Se incluyen el resto de atributos no contenidos en la url como parametros get
+		List<String> parameters = new ArrayList<String>();
+		{{#fieldsNotInUrl}}
+		if({{{request.javaInstanceName}}}.get{{{nameUcase}}}()!=null){
+			parameters.add("{{{name}}}="+URLEncoder.encode(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}()),"UTF-8"));
+		}
+		{{/fieldsNotInUrl}}
+		if(!parameters.isEmpty()){
+			url += "?"+TextUtils.join("&", parameters);
+		}
+
+		{{/hasFieldsNotInUrl}}
+		{{/isGet}}
 		url=LogicHelper.getInstance().postInjectURLParameters(url,{{{request.javaInstanceName}}});
 		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","SENT:"+url);
 		{{#request.multipart}}
@@ -211,12 +227,6 @@ public class Base{{{serviceName}}}Logic
 		request.setEntity(requestEntity);
 		{{/isDeleteJSON}}
 		{{/isWriteJSON}}
-		{{#isGet}}
-		JSONObject jsonObject = {{{request.javaInstanceName}}}.serialize();
-		request.addHeader("data",jsonObject.toString());	
-		Log.d(Base{{{serviceName}}}Logic.class.getName()+"::{{{method}}}","SENT (application/json):"+jsonObject.toString());
-
-		{{/isGet}}
 		LogicHelper.getInstance().addHeaders(request);
         LogicHelper.getInstance().preExecute(client,request,cookieStore,localContext);
 		HttpResponse response = client.execute(request,localContext);
