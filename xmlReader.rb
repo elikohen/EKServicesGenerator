@@ -60,8 +60,8 @@ class XmlReader
       protocol.messages[i].response=XmlReader.read_type(xmlMessage.elements['response'])
 
       # Add types to global types without overriding same type previously inserted
-      XmlReader.add_type_to_array(protocol.messages[i].request, protocol.types)
-      XmlReader.add_type_to_array(protocol.messages[i].response, protocol.types)
+      protocol.messages[i].request=XmlReader.add_type_to_array(protocol.messages[i].request, protocol.types)
+      protocol.messages[i].response=XmlReader.add_type_to_array(protocol.messages[i].response, protocol.types)
 
       # Read common protocol properties
       protocol.messages[i].name=xmlMessage.attributes['name']
@@ -113,12 +113,14 @@ class XmlReader
   ##########################################
   def XmlReader.add_type_to_array(type, array)
     if(!type.name)
-      return
+      return type
     end
     found = false
+    returningType = type;
     array.each do |thetype|
       if(thetype.name == type.name)
         found = true
+        returningType = thetype
         break
       end
     end
@@ -126,6 +128,8 @@ class XmlReader
     if(!found)
       array << type
     end
+    #In case type found, return this one because request on message will not be defined
+    return returningType
   end
 
   ##########################################
