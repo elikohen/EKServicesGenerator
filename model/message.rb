@@ -49,6 +49,11 @@ class Message
     return fields
   end
 
+  def hasFieldsInUrl
+    fields = fieldsInUrl()
+    return !fields.empty?
+  end
+
   def fieldsNotInUrl
     fields=Array.new
     request.fields.each do |field|

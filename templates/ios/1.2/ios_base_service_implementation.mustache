@@ -51,7 +51,6 @@
 - (ConnectionDelegate*) async{{methodUpperCase}}:({{request.name}} *)requestDTO withTag: (NSInteger) tag andDelegate: (id<ServiceDelegate>) delegate {
 	
 	NSString *url=@"{{{url}}}";
-
 	{{#inURLbutNotField}}
     #ifdef {{.}}
 	url=[url stringByReplacingOccurrencesOfString: {{=<% %>=}}@"${<%={{ }}=%>{{.}}{{=<% %>=}}}<%={{ }}=%>" withString:{{.}}];
@@ -150,7 +149,12 @@
 		[content addObject:[NSString stringWithFormat:@"%@=%@",@"{{{name}}}",requestDTO.{{{iosName}}}]];       
 	}
 	{{/fieldsNotInUrlNoBool}}
+	{{#hasFieldsInUrl}}
+	NSString * urlParams = [NSString stringWithFormat:@"&%@",[content componentsJoinedByString: @"&"]];
+	{{/hasFieldsInUrl}}
+	{{^hasFieldsInUrl}}
 	NSString * urlParams = [NSString stringWithFormat:@"?%@",[content componentsJoinedByString: @"&"]];
+	{{/hasFieldsInUrl}}
 	escapedUrl = [escapedUrl stringByAppendingString:[urlParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	NSLog(@"%@", escapedUrl);
 	{{/hasFieldsNotInUrl}}
