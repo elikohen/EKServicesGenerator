@@ -149,12 +149,12 @@
 		[content addObject:[NSString stringWithFormat:@"%@=%@",@"{{{name}}}",requestDTO.{{{iosName}}}]];       
 	}
 	{{/fieldsNotInUrlNoBool}}
-	{{#hasFieldsInUrl}}
+	{{#hasUrlParams}}
 	NSString * urlParams = [NSString stringWithFormat:@"&%@",[content componentsJoinedByString: @"&"]];
-	{{/hasFieldsInUrl}}
-	{{^hasFieldsInUrl}}
+	{{/hasUrlParams}}
+	{{^hasUrlParams}}
 	NSString * urlParams = [NSString stringWithFormat:@"?%@",[content componentsJoinedByString: @"&"]];
-	{{/hasFieldsInUrl}}
+	{{/hasUrlParams}}
 	escapedUrl = [escapedUrl stringByAppendingString:[urlParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	NSLog(@"%@", escapedUrl);
 	{{/hasFieldsNotInUrl}}

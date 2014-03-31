@@ -54,6 +54,10 @@ class Message
     return !fields.empty?
   end
 
+  def hasUrlParams
+    return url.include?("?")
+  end
+
   def fieldsNotInUrl
     fields=Array.new
     request.fields.each do |field|
