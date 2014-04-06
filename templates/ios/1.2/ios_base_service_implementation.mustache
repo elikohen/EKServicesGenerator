@@ -79,7 +79,7 @@
 
 	NSString *escapedUrl = [[ServiceHelper sharedInstance] escapeUrl:url];
 	{{#isWrite}}
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeout];
 
 	NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
 	{{#fieldsNotInUrlBool}}
@@ -117,7 +117,7 @@
     {{#fieldsInUrl}}
     [jsonDict removeObjectForKey:@"{{{name}}}"];
     {{/fieldsInUrl}}
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeout];
     
     NSData *requestData = [NSJSONSerialization dataWithJSONObject:jsonDict options:NSJSONWritingPrettyPrinted error:nil];		
 	_ModelGenLog(@"%@",[[NSString alloc] initWithData:requestData encoding:NSUTF8StringEncoding]);
@@ -159,7 +159,7 @@
 	NSLog(@"%@", escapedUrl);
 	{{/hasFieldsNotInUrl}}
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeout];
 	[request setHTTPMethod:@"GET"];
     {{/isGet}}
 

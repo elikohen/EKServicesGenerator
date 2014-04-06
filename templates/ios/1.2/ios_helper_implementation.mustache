@@ -10,6 +10,9 @@
 #import "ServiceHelper.h"
 #import "ServiceResponse.h"
 
+const NSInteger kTimeoutRetries = 1;
+const NSTimeInterval kConnectionTimeout = 20.0;
+
 @interface ServiceHelper ()
 
 @property (nonatomic, strong) NSMutableDictionary *mHeaders;
