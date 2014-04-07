@@ -38,6 +38,7 @@
 	self.tag = tag;
 	
 	if([[ServiceHelper sharedInstance] checkConnection]){
+		[[ServiceHelper sharedInstance] setNetworkActivityVisible:YES];
 		self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 		[self.connection start];
 	}
@@ -48,6 +49,7 @@
 
 - (void) cancel{
 	if(self.connection){
+		[[ServiceHelper sharedInstance] setNetworkActivityVisible:NO];
 		[self.connection cancel];
 	}
 	self.connection = nil;
@@ -69,6 +71,10 @@
 			result = [[ServiceResponse alloc] initWithData:nil andResponse:self.receivedResponse];
 		}
 	}
+
+	if(self.connection){
+        [[ServiceHelper sharedInstance] setNetworkActivityVisible:NO];
+    }
 	
 	if (!error && _delegate) {
 		if([[ServiceHelper sharedInstance] checkCorrectResponse:result serviceTag: self.tag]){

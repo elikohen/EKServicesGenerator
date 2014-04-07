@@ -15,6 +15,7 @@
 
 // Get the shared instance and create it if necessary.
 + (ServiceHelper *)sharedInstance;
+- (void) setNetworkActivityVisible: (BOOL) visible;
 - (void) addHeader:(NSString*) header withValue: (NSString*) value;
 - (void) removeHeader:(NSString*) header;
 - (NSString *) preInjectURLParameters:(NSString *)url withObject:(NSObject *)obj;

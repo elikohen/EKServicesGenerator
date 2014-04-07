@@ -10,7 +10,10 @@
 #import "ServiceHelper.h"
 #import "ServiceResponse.h"
 
-@interface ServiceHelper ()
+@interface ServiceHelper (){
+    NSInteger mNetworkActivityCount;
+}
+
 
 @property (nonatomic, strong) NSMutableDictionary *mHeaders;
 
@@ -35,6 +38,17 @@
     _mHeaders = [[NSMutableDictionary alloc] init];
   }
   return self;
+}
+
+- (void) setNetworkActivityVisible: (BOOL) visible{
+    if(visible){
+        mNetworkActivityCount++;
+    }
+    else if(mNetworkActivityCount > 0){
+        mNetworkActivityCount--;
+    }
+    
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(mNetworkActivityCount > 0)];
 }
 
 - (void) addHeader:(NSString*) header withValue: (NSString*) value{
