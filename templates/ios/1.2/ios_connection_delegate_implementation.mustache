@@ -17,10 +17,12 @@
 @property (nonatomic, strong) NSURLResponse *receivedResponse;
 @property (nonatomic, strong) NSError *error;
 @property (nonatomic, strong) NSURLConnection *connection;
+@property (nonatomic, strong) NSURLRequest *request;
 
 @property (nonatomic, weak) id<ServiceDelegate> delegate;
 @property (nonatomic) NSInteger tag;
 @property (copy) ProcessDataBlock processDataBlock;
+@property (nonatomic) NSInteger timeoutRetries;
 
 @end
 
@@ -30,21 +32,13 @@
 #pragma mark - Public methods
 
 - (void) startConnectionWithRequest: (NSURLRequest*) request tag: (NSInteger) tag delegate: (id<ServiceDelegate>) delegate andProcessDataBlock: (ProcessDataBlock) dataBlock {
-	self.receivedData = [[NSMutableData alloc] init];
-	self.receivedResponse = nil;
-	self.connection = nil;
 	self.delegate = delegate;
 	self.processDataBlock = dataBlock;
 	self.tag = tag;
+    self.request = request;
+    self.timeoutRetries = kTimeoutRetries;
 	
-	if([[ServiceHelper sharedInstance] checkConnection]){
-		[[ServiceHelper sharedInstance] setNetworkActivityVisible:YES];
-		self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-		[self.connection start];
-	}
-	else{
-		[delegate onTaskNoConnection:tag];
-	}
+    [self startRequest];
 }
 
 - (void) cancel{
@@ -52,15 +46,42 @@
 		[[ServiceHelper sharedInstance] setNetworkActivityVisible:NO];
 		[self.connection cancel];
 	}
-	self.connection = nil;
-	self.receivedData = nil;
-	self.receivedResponse = nil;
-	self.error = nil;
+    
+    [self cleanObject];
 }
 
 #pragma mark - Private methods
 
+- (void) startRequest{
+    self.receivedData = [[NSMutableData alloc] init];
+	self.receivedResponse = nil;
+	self.connection = nil;
+    self.error = nil;
+    
+    if([[ServiceHelper sharedInstance] checkConnection]){
+    	[[ServiceHelper sharedInstance] setNetworkActivityVisible:YES];
+		self.connection = [[NSURLConnection alloc] initWithRequest:self.request delegate:self];
+		[self.connection start];
+	}
+	else{
+        if([self.delegate respondsToSelector:@selector(onTaskNoConnection:)]){
+            [self.delegate onTaskNoConnection:self.tag];
+        }
+	}
+}
+
 - (void) didFinishLoading{
+    
+    //In case of timeout -> retry
+    if(self.error.code == NSURLErrorTimedOut && self.timeoutRetries > 0){
+    	if(self.connection){
+    		[[ServiceHelper sharedInstance] setNetworkActivityVisible:NO];
+		}
+        self.timeoutRetries = self.timeoutRetries - 1;
+        [self startRequest];
+        return;
+    }
+    
 	ServiceResponse *result = nil;
 	NSError *error = self.error;
 	if(!error){
@@ -87,10 +108,18 @@
 	else if (error && _delegate) {
 		[_delegate onTaskError:error withTag:self.tag];
 	}
-	self.connection = nil;
-	self.receivedData = nil;
-	self.receivedResponse = nil;
-	self.error = nil;
+    
+    [self cleanObject];
+}
+
+- (void) cleanObject{
+    self.receivedData = nil;
+    self.receivedResponse = nil;
+    self.error = nil;
+    self.connection = nil;
+    self.request = nil;
+    self.delegate = nil;
+    self.processDataBlock = nil;
 }
 
 #pragma mark -  NSURLConnectionDelegate
