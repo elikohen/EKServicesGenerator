@@ -32,11 +32,17 @@ class Field
     return name.upcase
   end
   def javaName
-    if name.length > 1
-      return name.camelize()[0..1].downcase<<name.camelize()[2..-1]
+    javaname = name
+    if javaname.length > 1
+      javaname = javaname.camelize()[0..1].downcase<<javaname.camelize()[2..-1]
     else
-      return name.downcase
+      javaname = javaname.downcase
     end
+
+    if(javaname == 'private')
+      javaname = javaname + "_";
+    end
+    return javaname;
   end
   def iosName
     iosname = name
@@ -55,7 +61,7 @@ class Field
     if iosname.length > 1
       return iosname.camelize()[0..1].downcase<<name.camelize()[2..-1]
     else
-      iosname.downcase
+      return iosname.downcase
     end
   end
   def iosCustomGetter
