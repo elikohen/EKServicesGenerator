@@ -23,6 +23,11 @@ public class RawData implements Validable{
 	public boolean isValid() {
 		return mData != null;
 	}
+
+	@Override
+	public Object validableData(){
+		return null;
+	}
 	
 	public byte[] getData(){
 		return mData;

@@ -7,6 +7,8 @@
 */
 package {{{packagename}}}.logic;
 
+import {{{packagename}}}.logic.utils.BetterHttpResponse;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -59,4 +61,7 @@ public class LogicHelper
 	public String preprocessResponse(String responseString) {
 		return responseString;
 	}
+	public boolean checkCorrectResponse(BetterHttpResponse response){
+        return true;
+    }
 }

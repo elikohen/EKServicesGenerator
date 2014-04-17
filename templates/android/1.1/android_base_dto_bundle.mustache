@@ -226,10 +226,19 @@ public class {{{projectName}}}DTOBundle
 
 		public boolean isValid(){
 			{{#isResponse}}
-			return (responseCode != null && responseCode.equals("000"));
+			return (error == null || error.getCode() == null || error.getCode() == 0);
 			{{/isResponse}}
 			{{^isResponse}}
 			return true;
+			{{/isResponse}}
+		}
+
+		public Object validableData(){
+			{{#isResponse}}
+			return error;
+			{{/isResponse}}
+			{{^isResponse}}
+			return null;
 			{{/isResponse}}
 		}
 		

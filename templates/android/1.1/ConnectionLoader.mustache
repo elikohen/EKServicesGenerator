@@ -13,7 +13,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import android.os.Handler;
 import android.os.Message;
 
-import {{{packagename}}}.model.dto.Validable;
+import {{{packagename}}}.logic.LogicHelper;
 
 public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 	
@@ -57,8 +57,9 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 	 */
 	
 	public void handleMessage(Message msg) {		
-		if(mListener != null){
-			if(mException != null){
+		
+		if(mException != null){
+			if(mListener != null){
 				if (mException.getCause() instanceof HttpHostConnectException) {
 					mListener.notifyNoConnection(mTag);
 				}
@@ -66,23 +67,16 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 					mListener.notifyErrorConnecting(mException, mTag);
 				}
 			}
-			else if(mResponse.getStatusCode() == 200){
-				if(mResponse instanceof Validable){
-					Validable data = (Validable)mResponse.getDataObject();
-					if(data.isValid()){
-						mListener.notifySuccess(mResponse, mTag);
-					}
-					else{
-						mListener.notifyError(mResponse, mTag);
-					}
-				}
-				else{
-					mListener.notifySuccess(mResponse, mTag);
-				}
-			}
-			else{
-				mListener.notifyError(mResponse, mTag);
-			}
 		}
+		else if(LogicHelper.getInstance().checkCorrectResponse(mResponse)){
+			if(mListener != null){
+            	mListener.notifySuccess(mResponse, mTag);
+        	}
+        }
+        else{
+        	if(mListener != null){
+            	mListener.notifyError(mResponse, mTag);
+        	}
+        }
 	}		
 }

@@ -58,7 +58,7 @@ class ServiceType
 
   def isResponse
     fields.each do |field|
-      if(field.javaName=="responseCode" || field.iosName=="responseCode")
+      if(field.javaName=="error" || field.iosName=="error")
         return true
       end
     end
