@@ -151,7 +151,7 @@ public class Base{{{serviceName}}}Logic
 		}
 		else
 		{
-			url=url.replace("${"+"{{{name}}}"+"}",URLEncoder.encode(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}()),"UTF-8"));
+			url=url.replace("${"+"{{{name}}}"+"}",String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}()));
 		}	
 		{{/fieldsInUrl}}
 		
@@ -168,7 +168,12 @@ public class Base{{{serviceName}}}Logic
 		}
 		{{/fieldsNotInUrl}}
 		if(!parameters.isEmpty()){
+			{{#hasUrlParams}}
+			url += "&"+TextUtils.join("&", parameters);
+			{{/hasUrlParams}}
+			{{^hasUrlParams}}
 			url += "?"+TextUtils.join("&", parameters);
+			{{/hasUrlParams}}
 		}
 
 		{{/hasFieldsNotInUrl}}
