@@ -55,6 +55,11 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
                 mException = ex;
                 tryouts--;
             }
+            catch (SocketTimeoutException ex){
+                Log.d("ConnectionLoader", "SocketTimeoutException, retrying: "+ex.getMessage());
+                mException = ex;
+                tryouts--;
+            }
             catch (Exception ex) {
                 Log.d("ConnectionLoader", "Exception: "+ex.getMessage());
                 mException = ex;
