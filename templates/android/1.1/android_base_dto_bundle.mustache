@@ -254,19 +254,19 @@ public class {{{projectName}}}DTOBundle
 			dest.writeString({{{javaName}}});
 			{{/isString}}
 			{{#isLong}}
-			dest.writeLong({{{javaName}}});
+			dest.writeLong({{{javaName}}} != null ? {{{javaName}}} : 0);
 			{{/isLong}}
 			{{#isInteger}}
-			dest.writeInt({{{javaName}}});
+			dest.writeInt({{{javaName}}} != null ? {{{javaName}}} : 0);
 			{{/isInteger}}
 			{{#isDouble}}
-			dest.writeDouble({{{javaName}}});
+			dest.writeDouble({{{javaName}}} != null ? {{{javaName}}} : 0.0);
 			{{/isDouble}}
 			{{#isBoolean}}
 			dest.writeByte((byte)(({{{javaName}}} != null && {{{javaName}}})? 1:0));
 			{{/isBoolean}}
 			{{#isFloat}}
-			dest.writeFloat({{{javaName}}});
+			dest.writeFloat({{{javaName}}} != null ? {{{javaName}}} : 0.0f);
 			{{/isFloat}}
 		{{/baseFields}}
 
