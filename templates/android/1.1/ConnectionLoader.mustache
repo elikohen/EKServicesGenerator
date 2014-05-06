@@ -8,10 +8,13 @@
 
 package {{{packagename}}}.logic.utils;
 
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import {{{packagename}}}.logic.LogicHelper;
 
@@ -36,12 +39,28 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 	@Override
 	public void run() {
 		
-		try{
-			mResponse = doInBackground(mRequest);
-		}
-		catch(Exception ex){
-			mException = ex;
-		}
+        int tryouts = LogicHelper.TIMEOUT_TRYOUTS;
+        while(tryouts > 0) {
+            try {
+                mResponse = doInBackground(mRequest);
+                tryouts = 0;
+            }
+            catch (NoHttpResponseException ex){
+                Log.d("ConnectionLoader", "NoHttpResponseException, retrying: "+ex.getMessage());
+                mException = ex;
+                tryouts--;
+            }
+            catch (ConnectTimeoutException ex){
+                Log.d("ConnectionLoader", "ConnectTimeoutException, retrying: "+ex.getMessage());
+                mException = ex;
+                tryouts--;
+            }
+            catch (Exception ex) {
+                Log.d("ConnectionLoader", "Exception: "+ex.getMessage());
+                mException = ex;
+                tryouts = 0;
+            }
+        }
 		
 		Message message = new Message();
 		message.setTarget(this);
