@@ -43,6 +43,7 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
         while(tryouts > 0) {
             try {
                 mResponse = doInBackground(mRequest);
+                mException = null;
                 tryouts = 0;
             }
             catch (NoHttpResponseException ex){
