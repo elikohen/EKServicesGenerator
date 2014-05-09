@@ -83,25 +83,26 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 	
 	public void handleMessage(Message msg) {		
 		
-		if(mException != null){
-			if(mListener != null){
-				if (mException.getCause() instanceof HttpHostConnectException) {
-					mListener.notifyNoConnection(mTag);
-				}
-				else{
-					mListener.notifyErrorConnecting(mException, mTag);
-				}
-			}
-		}
-		else if(LogicHelper.getInstance().checkCorrectResponse(mResponse)){
-			if(mListener != null){
-            	mListener.notifySuccess(mResponse, mTag);
-        	}
+        if (mListener == null) return;
+
+        if (mException != null) {
+            if (mException.getCause() instanceof HttpHostConnectException) {
+                mListener.notifyNoConnection(mTag);
+            }
+            else {
+                mListener.notifyErrorConnecting(mException, mTag);
+            }
         }
-        else{
-        	if(mListener != null){
-            	mListener.notifyError(mResponse, mTag);
-        	}
+        else if (LogicHelper.getInstance().checkCorrectResponse(mResponse)) {
+            mListener.notifySuccess(mResponse, mTag);
+        }
+        else {
+            if (mResponse != null) {
+                mListener.notifyError(mResponse, mTag);
+            }
+            else {
+                mListener.notifyErrorConnecting(new Exception("Services Generator: No response"), mTag);
+            }
         }
 	}		
 }
