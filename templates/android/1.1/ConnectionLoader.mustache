@@ -39,39 +39,49 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
 	@Override
 	public void run() {
 		
+        if (Thread.currentThread().isInterrupted()) {
+            Log.d("ConnectionLoader","Thread interrupted - Start");
+            return;
+        }
+
         int tryouts = LogicHelper.TIMEOUT_TRYOUTS;
-        while(tryouts > 0) {
+        while (tryouts > 0) {
+            if (Thread.currentThread().isInterrupted()) {
+                Log.d("ConnectionLoader","Thread interrupted - Background Loop: "+tryouts);
+                return;
+            }
             try {
                 mResponse = doInBackground(mRequest);
                 mException = null;
                 tryouts = 0;
-            }
-            catch (NoHttpResponseException ex){
-                Log.d("ConnectionLoader", "NoHttpResponseException, retrying: "+ex.getMessage());
+            } catch (NoHttpResponseException ex) {
+                Log.d("ConnectionLoader", "NoHttpResponseException, retrying: " + ex.getMessage());
                 mException = ex;
                 tryouts--;
-            }
-            catch (ConnectTimeoutException ex){
-                Log.d("ConnectionLoader", "ConnectTimeoutException, retrying: "+ex.getMessage());
+            } catch (ConnectTimeoutException ex) {
+                Log.d("ConnectionLoader", "ConnectTimeoutException, retrying: " + ex.getMessage());
                 mException = ex;
                 tryouts--;
-            }
-            catch (SocketTimeoutException ex){
-                Log.d("ConnectionLoader", "SocketTimeoutException, retrying: "+ex.getMessage());
+            } catch (SocketTimeoutException ex) {
+                Log.d("ConnectionLoader", "SocketTimeoutException, retrying: " + ex.getMessage());
                 mException = ex;
                 tryouts--;
-            }
-            catch (Exception ex) {
-                Log.d("ConnectionLoader", "Exception: "+ex.getMessage());
+            } catch (Exception ex) {
+                Log.d("ConnectionLoader", "Exception: " + ex.getMessage());
                 mException = ex;
                 tryouts = 0;
             }
         }
-		
-		Message message = new Message();
-		message.setTarget(this);
-		message.what = mTag;
-		message.sendToTarget();
+
+        if (Thread.currentThread().isInterrupted()) {
+            Log.d("ConnectionLoader","Thread interrupted - End");
+            return;
+        }
+
+        Message message = new Message();
+        message.setTarget(this);
+        message.what = mTag;
+        message.sendToTarget();
 	}
 	
 	protected abstract BetterHttpResponse doInBackground(T request) throws Exception;

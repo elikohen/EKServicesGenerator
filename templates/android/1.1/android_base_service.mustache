@@ -137,6 +137,10 @@ public class Base{{{serviceName}}}Logic
 		CookieStore cookieStore = new BasicCookieStore();	
 		HttpContext localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} Start");
+        }
 	
 		{{#onSend}}
 			{{{onSend}}}({{{request.javaInstanceName}}});
@@ -194,7 +198,9 @@ public class Base{{{serviceName}}}Logic
 			new StringBody(String.valueOf({{{request.javaInstanceName}}}.get{{{nameUcase}}}())));
 		{{/isFile}}
 		{{/fieldsNotInUrl}}
-			
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} Pre execute");
+        }	
 		postRequest.setEntity(reqEntity);
 		LogicHelper.getInstance().preExecute(httpClient,postRequest,cookieStore,localContext);
 		HttpResponse response = httpClient.execute(postRequest,localContext);
@@ -205,9 +211,15 @@ public class Base{{{serviceName}}}Logic
 		StringBuilder s = new StringBuilder();
 
 		while ((sResponse = reader.readLine()) != null) {
+			if (Thread.currentThread().isInterrupted()) {
+            	throw new Exception("Thread interrupted - {{{method}}} Read line execute");
+        	}
 			s = s.append(sResponse);
 		}
 		String result=s.toString();
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} Post execute");
+        }
 		{{/request.multipart}}
 		{{^request.multipart}}
 		DefaultHttpClient client = HttpClientHelper.getInstance().getHttpClient();
@@ -232,11 +244,17 @@ public class Base{{{serviceName}}}Logic
 		request.setEntity(requestEntity);
 		{{/isDeleteJSON}}
 		{{/isWriteJSON}}
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} Pre execute");
+        }
 		LogicHelper.getInstance().addHeaders(request);
         LogicHelper.getInstance().preExecute(client,request,cookieStore,localContext);
 		HttpResponse response = client.execute(request,localContext);
 		LogicHelper.getInstance().postExecute(client,request,response,cookieStore);
 		HttpEntity entity = response.getEntity();
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} Post execute");
+        }
 		{{^response.isRawData}}
 		String result=LogicUtils.convertStreamToString(entity.getContent());
 		result=LogicHelper.getInstance().preprocessResponse(result);
@@ -274,6 +292,10 @@ public class Base{{{serviceName}}}Logic
 		}
 		BetterHttpResponseImpl responseImpl = new BetterHttpResponseImpl(response, entity, objectResponse);
 		{{/response.isRawData}}
+
+		if (Thread.currentThread().isInterrupted()) {
+            throw new Exception("Thread interrupted - {{{method}}} End");
+        }
 		
 		return responseImpl;
 	}
