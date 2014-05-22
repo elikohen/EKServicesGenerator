@@ -107,7 +107,7 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
             mListener.notifySuccess(mResponse, mTag);
         }
         else {
-            if (mResponse != null) {
+            if (mResponse.getDataObject() != null) {
                 mListener.notifyError(mResponse, mTag);
             }
             else {
