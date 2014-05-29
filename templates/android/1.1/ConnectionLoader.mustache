@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.net.SocketTimeoutException;
+
 import {{{packagename}}}.logic.LogicHelper;
 
 public abstract class ConnectionLoader<T> extends Handler implements Runnable{
