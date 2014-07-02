@@ -156,7 +156,7 @@
 	NSString * urlParams = [NSString stringWithFormat:@"?%@",[content componentsJoinedByString: @"&"]];
 	{{/hasUrlParams}}
 	escapedUrl = [escapedUrl stringByAppendingString:[urlParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-	NSLog(@"%@", escapedUrl);
+	_ModelGenLog(@"Escaped URL: %@", escapedUrl);
 	{{/hasFieldsNotInUrl}}
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:escapedUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeout];

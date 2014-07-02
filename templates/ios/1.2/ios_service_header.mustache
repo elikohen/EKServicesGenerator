@@ -9,12 +9,6 @@
 
 #import <Foundation/Foundation.h> 
 #import "Base{{serviceName}}Logic.h"
-{{#imports}}
-#import "{{request.name}}.h"
-{{^response.isRawData}}
-#import "{{response.name}}.h"
-{{/response.isRawData}}
-{{/imports}}
 
 @interface {{{serviceName}}}Logic : Base{{{serviceName}}}Logic
   // Get the shared instance and create it if necessary.
