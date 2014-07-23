@@ -122,8 +122,7 @@ public class Base{{{serviceName}}}Logic
 		{{#request.fields}}
 		{{{request.javaInstanceName}}}.set{{{nameUcase}}}({{{javaName}}});	
 		{{/request.fields}}
-		BetterHttpResponse returnValue={{{method}}}({{{request.javaInstanceName}}});
-		return returnValue;
+		return {{{method}}}({{{request.javaInstanceName}}});
 	}
 	
 	/**

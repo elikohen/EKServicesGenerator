@@ -162,7 +162,7 @@ public class {{{projectName}}}DTOBundle
 			{{#baseFields}}
 			if(this.get{{{nameUcase}}}()!=null)
 			{		
-				returnValue.put("{{{name}}}", (this.get{{{nameUcase}}}() == null)? JSONObject.NULL : this.get{{{nameUcase}}}());
+				returnValue.put("{{{name}}}", this.get{{{nameUcase}}}());
 			}
 			{{/baseFields}}
 			{{#baseArrayFields}}

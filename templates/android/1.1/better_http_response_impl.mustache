@@ -50,8 +50,7 @@ public class BetterHttpResponseImpl implements BetterHttpResponse {
 		while ((bytesReadCount = entityStream.read(buffer)) > 0) {
 		    entityStringBuilder.append(new String(buffer, 0, bytesReadCount));
 		}
-		String entityString = entityStringBuilder.toString();
-		return entityString;
+		return entityStringBuilder.toString();
 	}
 
 	public int getStatusCode() {
