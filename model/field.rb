@@ -56,6 +56,8 @@ class Field
     ## If there's no name of the class just change by objectId
     elsif(iosname == 'id')
       return 'objectId'
+    elsif(iosname.downcase == 'description')
+      return 'objectDescription'
     end
 
     if iosname.length > 1

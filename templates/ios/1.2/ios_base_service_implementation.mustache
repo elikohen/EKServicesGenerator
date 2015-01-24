@@ -36,7 +36,7 @@
 
 	{{request.name}} *request = [[{{request.name}} alloc] init];
 	{{#request.fields}}
-	request.{{{iosName}}} = {{{iosName}}};
+	request.{{{iosName}}} = {{{javaName}}};
 	{{/request.fields}}
 
 	return [self async{{methodUpperCase}}: request withTag: tag andDelegate: delegate];
