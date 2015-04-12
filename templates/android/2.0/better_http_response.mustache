@@ -1,0 +1,34 @@
+/**
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2015 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.logic.utils;
+
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponse;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public interface BetterHttpResponse {
+
+	public HttpResponse unwrap();
+
+	public InputStream getResponseBody() throws IOException;
+
+	public byte[] getResponseBodyAsBytes() throws IOException;
+
+	public String getResponseBodyAsString() throws IOException;
+
+	public int getStatusCode();
+
+	public HttpHeaders getAllHeaders();
+
+	public Object getHeader(String header);
+	
+	public Object getDataObject();
+}

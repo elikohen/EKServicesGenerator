@@ -1,0 +1,36 @@
+/**
+  {{serviceName}}
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2013 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.model.dto;
+
+import {{{packagename}}}.model.dto.Validable;
+
+public class RawData implements Validable{
+	
+	private final byte[] mData;
+	
+	public RawData(byte[] data){
+		mData = data;
+	}
+
+	@Override
+	public boolean isValid() {
+		return mData != null;
+	}
+
+	@Override
+	public Object validableData(){
+		return null;
+	}
+	
+	public byte[] getData(){
+		return mData;
+	}
+
+}

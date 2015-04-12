@@ -36,15 +36,6 @@ class ServiceType
     provider_name=name+'Provider'
     return provider_name
   end
-  
-  def isMultipart
-    fields.each do |field| 
-      if(field.type=="file")
-        return true
-      end
-    end
-    return false
-  end
 
   def isRawData
     if(!@type)

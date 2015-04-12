@@ -1,0 +1,53 @@
+/**
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.logic.utils;
+
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.json.JsonHttpContent;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+public class RequestHelper {
+
+    private static final HttpTransport HTTP_TRANSPORT;
+
+    static {
+
+        System.setProperty("http.keepAlive", "true");
+
+        HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+    }
+
+    public static HttpRequest buildGetRequest(String url) throws IOException {
+        HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory();
+        return requestFactory.buildGetRequest(new GenericUrl(url));
+    }
+
+    public static HttpRequest buildDeleteRequest(String url) throws IOException {
+        HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory();
+        return requestFactory.buildDeleteRequest(new GenericUrl(url));
+    }
+
+    public static HttpRequest buildPostRequest(String url, JSONObject content) throws IOException {
+        HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory();
+        return requestFactory.buildPostRequest(new GenericUrl(url), new JsonHttpContent(new AndroidJsonFactory(), content));
+    }
+
+    public static HttpRequest buildPutRequest(String url, JSONObject content) throws IOException {
+        HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory();
+        return requestFactory.buildPutRequest(new GenericUrl(url), new JsonHttpContent(new AndroidJsonFactory(), content));
+    }
+}

@@ -1,0 +1,67 @@
+/**
+  {{projectName}}
+
+  Created by Generator
+  Copyright (c) 2015 EKGDev. All rights reserved.
+  Version: {{version}}
+*/
+
+package {{{packagename}}}.logic.utils;
+
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpResponse;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+
+public class BetterHttpResponseImpl implements BetterHttpResponse {
+
+    private HttpResponse mResponse;
+    private Object mDataObject;
+
+    public BetterHttpResponseImpl(HttpResponse response, Object dataObject) throws IOException {
+        this.mResponse = response;
+        this.mDataObject = dataObject;
+    }
+
+    public HttpResponse unwrap() {
+        return mResponse;
+    }
+
+    public InputStream getResponseBody() throws IOException {
+        return mResponse.getContent();
+    }
+
+    public byte[] getResponseBodyAsBytes() throws IOException {
+        return LogicUtils.convertStreamToBytes(mResponse.getContent());
+    }
+
+    public String getResponseBodyAsString() throws IOException {
+
+        return LogicUtils.convertStreamToString(mResponse.getContent());
+
+    }
+
+    public int getStatusCode() {
+        return this.mResponse.getStatusCode();
+    }
+
+    public HttpHeaders getAllHeaders() {
+        return mResponse.getHeaders();
+    }
+
+    public Object getHeader(String header) {
+        HttpHeaders headers = mResponse.getHeaders();
+        if (!headers.containsKey(header)) {
+            return null;
+        }
+        return headers.get(header);
+    }
+
+    @Override
+    public Object getDataObject() {
+        return mDataObject;
+    }
+}
+

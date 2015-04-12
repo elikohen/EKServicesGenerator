@@ -34,12 +34,4 @@ class Service
     end
     return false
   end  
-  def hasMultipart
-    messages.each do |message|
-      if message.request.isMultipart
-        return true
-      end      
-    end
-    return false
-  end
 end

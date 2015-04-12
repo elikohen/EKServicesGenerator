@@ -146,6 +146,9 @@ class Message
   def isWriteJSON
     isPostJSON() || isPutJSON() || isDeleteJSON()
   end
+  def isQuery
+    isGet() || isDelete() | isDeleteJSON()
+  end
   def isGet
     return type=='Get'
   end

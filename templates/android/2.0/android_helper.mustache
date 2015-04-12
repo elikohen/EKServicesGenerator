@@ -1,0 +1,58 @@
+/**
+  ${projectName}Helper
+
+  Created by Generator on 19/01/12.
+  Copyright (c) 2012 EKGDev. All rights reserved.
+  Version: ${version}
+*/
+package {{{packagename}}}.logic;
+
+import {{{packagename}}}.logic.utils.BetterHttpResponse;
+
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+
+public class LogicHelper
+{
+	public static final int TIMEOUT_TRYOUTS = 2;
+
+	private static LogicHelper instance=new LogicHelper();
+	private HttpHeaders headers = new HttpHeaders();
+	
+	private LogicHelper() {
+	} 
+	public static LogicHelper getInstance() {
+		return instance;
+	}
+	public final void addHeader(String header, String value){
+		headers.put(header, value);
+	}
+	public final Object getHeader(String header){
+		return headers.get(header);
+	}
+	public final void removeHeader(String header){
+		headers.remove(header);
+	}
+	public void addHeaders(HttpRequest request){
+		request.setHeaders(headers);
+	}
+	public String preInjectURLParameters(String url,Object request) {
+		return url;
+	}
+	public String postInjectURLParameters(String url,Object request) {
+		return url;
+	}
+	public void preExecute(HttpRequest request) {
+		
+	}
+	public void postExecute(HttpRequest request, HttpResponse response) {
+	
+	}	
+	public String preprocessResponse(String responseString) {
+		return responseString;
+	}
+	public boolean checkCorrectResponse(BetterHttpResponse response){
+        return true;
+    }
+}

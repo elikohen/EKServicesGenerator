@@ -3,6 +3,8 @@ class AndroidGenerator
   def generate(protocol,projectName,packageName,aVersion,aOutput,mode)
     if(aVersion && aVersion == "1.0")
         generate_1_0(protocol,projectName,packageName,"1.0",aOutput,mode)
+    elsif(aVersion && aVersion == "1.1")
+        generate_1_1(protocol,projectName,packageName,"1.1",aOutput,mode)
     else
         generate_default(protocol,projectName,packageName,aVersion,aOutput)
     end
@@ -17,7 +19,131 @@ class AndroidGenerator
     parameters=Hash.new
     parameters['projectName']=projectName
     parameters['packagename']=packageName+".sgen"
-    parameters['version']="1.1"
+    parameters['version']="2.0"
+    parameters['dtos']=protocol.types
+    parameters['version']=aVersion if aVersion
+
+    ############ DTO-BUNDLE generation (Base DTOs)
+    puts 'DTOs'
+    puts '-------------'
+
+    baseDir = aOutput+'/'+packageName.gsub('.','/')+"/sgen"
+
+    baseDTODir=baseDir+"/model/dto/base/"
+    FileUtils.mkdir_p(baseDTODir)
+
+
+    puts "\tCreating Utils ... \t Validable"
+    helperFile=baseDir+"/model/dto/Validable.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/Validable.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
+
+    puts "\tCreating Utils ... \t RawData"
+    helperFile=baseDir+"/model/dto/RawData.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/RawData.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) } 
+
+    baseDTOFile=baseDTODir+'/'+projectName+"DTOBundle.java"
+    puts "\tCreating Base DTO Bundle... \t#{projectName}DTOBundle"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/android_base_dto_bundle.mustache").read,parameters)
+    File.open(baseDTOFile, 'w') { |file| file.write(res) }
+
+    ############ Extended DTOs (Extended DTOs)
+    dtoDir=baseDir+"/model/dto/"
+    FileUtils.mkdir_p(dtoDir)
+    protocol.types.each do |type|
+      puts "\tCreating DTO ... \t#{type.name}"
+      dtoFile=dtoDir+'/'+type.name+'.java'
+      parameters['className']=type.name
+      res=Mustache.render(File.open("templates/android/"+aVersion+"/android_base_dto.mustache").read,parameters)
+      File.open(dtoFile, 'w') { |file| file.write(res) }  unless File.exist?dtoFile
+    end
+
+    ########### Services
+    puts 'Services'
+    puts '--------'
+    logicBaseDir=baseDir+"/logic/base"
+    logicDir=baseDir+"/logic"
+    FileUtils.mkdir_p(logicBaseDir)
+
+    puts "\tCreating HttpOperation"
+    helperFile=logicDir+"/HttpOperation.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/HttpOperation.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating BaseHttpOperation"
+    helperFile=logicBaseDir+"/BaseHttpOperation.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/BaseHttpOperation.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    protocol.services.keys.each do |serviceKey|
+      puts "\tCreating Service ... \t#{serviceKey}"
+      logicBaseFile=logicBaseDir+"/Base"+serviceKey+"Logic.java"
+      logicFile=logicDir+'/'+serviceKey+"Logic.java"
+      parameters['serviceName']=serviceKey
+      parameters['serviceNameLower']=serviceKey.downcase
+      parameters['messages']=protocol.services[serviceKey].messages
+      parameters['service']=protocol.services[serviceKey];
+      res=Mustache.render(File.open("templates/android/"+aVersion+"/android_base_service.mustache").read,parameters)
+      File.open(logicBaseFile, 'w') { |file| file.write(res) }
+      res=Mustache.render(File.open("templates/android/"+aVersion+"/android_service.mustache").read,parameters)
+      File.open(logicFile, 'w') { |file| file.write(res) }      unless File.exists?(logicFile)
+    end
+
+    ######### Utils
+    puts 'UTILS'
+    puts '--------------'
+    FileUtils.mkdir_p(baseDir+"/logic/utils/")
+
+    puts "\tCreating LoaderUtil ... \tConnectionLoader"
+    helperFile=baseDir+"/logic/utils/ConnectionLoader.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/ConnectionLoader.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating LoaderUtil ... \tBetterHttpResponse"
+    helperFile=baseDir+"/logic/utils/BetterHttpResponse.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating LoaderUtil ... \tBetterHttpResponseImpl"
+    helperFile=baseDir+"/logic/utils/BetterHttpResponseImpl.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/better_http_response_impl.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating LoaderUtil ... \tNotifiedHttpRequest"
+    helperFile=baseDir+"/logic/utils/NotifiedHttpRequest.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/notified_http_request.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating LoaderUtil ... \tRequestHelper"
+    helperFile=baseDir+"/logic/utils/RequestHelper.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/RequestHelper.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    puts "\tCreating LoaderUtil ... \tLogicUtils"
+    helperFile=baseDir+"/logic/utils/LogicUtils.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/LogicUtils.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) }
+
+    ############ Helper if needed
+    puts 'HELPERS'
+    puts '--------------'
+    puts "\tCreating Helper ... \t#{projectName}Helper"
+    helperFile=baseDir+"/logic/LogicHelper.java"
+    res=Mustache.render(File.open("templates/android/"+aVersion+"/android_helper.mustache").read,parameters)
+    File.open(helperFile, 'w') { |file| file.write(res) } unless File.exists?(helperFile)
+  end
+
+  def generate_1_1(protocol,projectName,packageName,aVersion,aOutput)
+    puts 'Android Generation'
+    puts '------------------'
+    ###################################
+    # ANDROID GENERATION
+    ###################################
+    parameters=Hash.new
+    parameters['projectName']=projectName
+    parameters['packagename']=packageName+".sgen"
+    parameters['version']="2.0"
     parameters['dtos']=protocol.types
     parameters['version']=aVersion if aVersion
 
