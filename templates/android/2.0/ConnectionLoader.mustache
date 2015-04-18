@@ -56,14 +56,6 @@ public abstract class ConnectionLoader<T> extends Handler implements Runnable{
                 mResponse = doInBackground(mRequest);
                 mException = null;
                 tryouts = 0;
-            } catch (NoHttpResponseException ex) {
-                Log.d("ConnectionLoader", "NoHttpResponseException, retrying: " + ex.getMessage());
-                mException = ex;
-                tryouts--;
-            } catch (ConnectTimeoutException ex) {
-                Log.d("ConnectionLoader", "ConnectTimeoutException, retrying: " + ex.getMessage());
-                mException = ex;
-                tryouts--;
             } catch (SocketTimeoutException ex) {
                 Log.d("ConnectionLoader", "SocketTimeoutException, retrying: " + ex.getMessage());
                 mException = ex;

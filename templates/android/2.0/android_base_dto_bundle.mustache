@@ -48,13 +48,13 @@ public class {{{projectName}}}DTOBundle
 			
 			{{#baseFields}}
 			{{#isLong}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if( !value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 				returnValue.set{{{nameUcase}}}(Long.parseLong(String.valueOf(value.get(CONSTANT_{{nameFullUcase}}))));
 			}
 			{{/isLong}}
 			{{#isInteger}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			if(value.get(CONSTANT_{{nameFullUcase}}).getClass()==String.class)
 			{
@@ -67,7 +67,7 @@ public class {{{projectName}}}DTOBundle
 			}	
 			{{/isInteger}}
 			{{#isFloat}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			if(value.get(CONSTANT_{{nameFullUcase}}}).getClass()==String.class)
 			{
@@ -80,13 +80,13 @@ public class {{{projectName}}}DTOBundle
 			}	
 			{{/isFloat}}
 			{{#isDouble}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{		
 				returnValue.set{{{nameUcase}}}(Double.valueOf(String.valueOf(value.get(CONSTANT_{{nameFullUcase}}))));			
 			}	
 			{{/isDouble}}
 			{{#isBoolean}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			if(value.get(CONSTANT_{{nameFullUcase}}).getClass()==String.class)
 			{
@@ -99,7 +99,7 @@ public class {{{projectName}}}DTOBundle
 			}	
 			{{/isBoolean}}		
 			{{#isString}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			returnValue.set{{{nameUcase}}}(({{{typeJava}}})value.get(CONSTANT_{{nameFullUcase}}));
 			}
@@ -108,7 +108,7 @@ public class {{{projectName}}}DTOBundle
 		
 			{{#baseArrayFields}}
 			ArrayList<{{{baseTypeSingular}}}> {{{javaName}}}List=new ArrayList<{{{baseTypeSingular}}}>();
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			JSONArray {{{name}}}Array=value.getJSONArray(CONSTANT_{{nameFullUcase}});
 			for(int i=0;i!={{{name}}}Array.length();i++)
@@ -122,7 +122,7 @@ public class {{{projectName}}}DTOBundle
 			{{/baseArrayFields}}
 		
 			{{#objectFields}}
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 			{{{typeJava}}} {{{javaName}}}={{{baseTypeSingular}}}.create((JSONObject)value.get(CONSTANT_{{nameFullUcase}}));
 			returnValue.set{{{nameUcase}}}({{{javaName}}});
@@ -131,7 +131,7 @@ public class {{{projectName}}}DTOBundle
 		
 			{{#objectArrayFields}}
 			ArrayList<{{{baseTypeSingular}}}> {{{javaName}}}List=new ArrayList<{{{baseTypeSingular}}}>();
-			if(value.has(CONSTANT_{{nameFullUcase}}) && !value.get(CONSTANT_{{nameFullUcase}}).toString().equals("null") )
+			if(!value.isNull(CONSTANT_{{nameFullUcase}}) )
 			{
 				if(value.get(CONSTANT_{{nameFullUcase}}) instanceof JSONArray)
 				{

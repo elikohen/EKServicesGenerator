@@ -5,16 +5,16 @@ public interface HttpOperation {
 	/**
 	 * Cancels and interrupts if running
 	 */
-	public void cancel();
+	void cancel();
 	
 	/**
 	 * Cancels interrupting depending on the parameter.
 	 * @param interruptIfRunning
 	 */
-	public void cancel(boolean interruptIfRunning);
+	void cancel(boolean interruptIfRunning);
 
 	/**
 	* Returns whether this operation is already cancelled.
 	*/
-	public boolean isCancelled();
+	boolean isCancelled();
 }

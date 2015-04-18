@@ -16,19 +16,19 @@ import java.io.InputStream;
 
 public interface BetterHttpResponse {
 
-	public HttpResponse unwrap();
+	HttpResponse unwrap();
 
-	public InputStream getResponseBody() throws IOException;
+	InputStream getResponseBody() throws IOException;
 
-	public byte[] getResponseBodyAsBytes() throws IOException;
+	byte[] getResponseBodyAsBytes() throws IOException;
 
-	public String getResponseBodyAsString() throws IOException;
+	String getResponseBodyAsString() throws IOException;
 
-	public int getStatusCode();
+	int getStatusCode();
 
-	public HttpHeaders getAllHeaders();
+	HttpHeaders getAllHeaders();
 
-	public Object getHeader(String header);
+	Object getHeader(String header);
 	
-	public Object getDataObject();
+	Object getDataObject();
 }

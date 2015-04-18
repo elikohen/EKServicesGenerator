@@ -19,34 +19,33 @@ public interface NotifiedHttpRequest {
 	/**
 	 * Status equals to 200
 	 * 
-	 * @param data
+	 * @param response
 	 * @param tag
 	 */
-	public void notifySuccess(BetterHttpResponse response, int tag);
+	void notifySuccess(BetterHttpResponse response, int tag);
 
 	/**
 	 * Status distinct to 200
 	 * 
-	 * @param data
+	 * @param response
 	 * @param tag
 	 */
-	public void notifyError(BetterHttpResponse response, int tag);
+	void notifyError(BetterHttpResponse response, int tag);
 
 	/**
 	 * Can not connect to host
 	 * 
-	 * @param data
 	 * @param tag
 	 */
-	public void notifyNoConnection(int tag);
+	void notifyNoConnection(int tag);
 
 	/**
 	 * Generic error during connection to host
 	 * 
-	 * @param data
+	 * @param e
 	 * @param tag
 	 */
-	public void notifyErrorConnecting(Exception e, int tag);
+	void notifyErrorConnecting(Exception e, int tag);
 
 }
 
