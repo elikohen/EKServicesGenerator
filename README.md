@@ -1,3 +1,10 @@
+# SUPER - DEPRECATED!
+
+Now with GSON + Retrofit for android and iOS new Codable feature this project makes no sense. Moreover it was super outdated as it works with objective-c and old android apis.
+
+
+
+
 
 # ServiceGenerator
 ## Plantilla de definición de servicios
